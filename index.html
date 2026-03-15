@@ -578,7 +578,7 @@ table tbody td{padding:9px 10px;vertical-align:top}
   </div>
 </div>
 
-<!-- ===== ADMIN LOGIN ===== --><!-- ===== ADMIN LOGIN ===== -->
+<!-- ===== ADMIN LOGIN ===== -->
 <div id="adminLoginPage" class="hidden">
   <div class="login-wrap">
     <div class="login-card">
@@ -761,121 +761,111 @@ const ZONES=["Bangalore","Bhopal","Bhubaneswar","Chandigarh","Chennai","CO Annex
 const ZONE_REGIONS={"Bangalore":["Ballari","Bengaluru East","Bengaluru North","Bengaluru South","Kalaburagi","Mysuru","ZO Bangalore"],"Bhopal":["Bhopal Central","Bilaspur","Gwalior","Indore","Jabalpur","Narmadapuram","Raipur","Rewa","ZO Bhopal"],"Bhubaneswar":["Balasore","Berhampur","Bhubaneswar","Cuttack","Rayagada","Sambalpur","ZO Bhubaneswar"],"Chandigarh":["Amritsar","Bathinda","Chandigarh","Hissar","Jalandhar","Karnal","Ludhiana","Shimla","ZO Chandigarh"],"Chennai":["Chennai North","Chennai South","Kancheepuram","Salem","ZO Chennai"],"CO Annex Bengaluru":["CO Annex Bengaluru"],"CO Annex Lucknow":["CO Annex Lucknow"],"CO Annex Patna":["CO Annex Patna"],"CO Annex. Delhi":["CO Annex. Delhi"],"CO annex. Hyderabad":["CO annex. Hyderabad"],"CO annex. Mangalore":["CO annex. Mangalore"],"CO Mumbai":["CO Mumbai"],"Coimbatore":["Coimbatore","Madurai","Tiruchirapally","Tirunelveli","Tiruppur","ZO Coimbatore"],"Ernakulam":["Ernakulam","Kollam","Kottayam","Kozhikode","Thiruvananthapuram","Thrissur","ZO Ernakulam"],"Gandhinagar":["Ahmedabad","Anand","Baroda","Gandhinagar","Junagadh","Mehsana","Rajkot","Surat","ZO Gandhinagar"],"Hyderabad":["Hyderabad-Koti","Hyderabad-Punjagutta","Hyderabad-Saifabad","Karimnagar","Khammam","Mahabubnagar","Nizamabad","Secunderabad","Siddipet","Warangal","ZO Hyderabad"],"Jaipur":["Jaipur","Jodhpur","Kota","Udaipur","ZO Jaipur"],"Kolkata":["Durgapur","Greater Kolkata","Guwahati","Howrah","Jorhat","Kolkata Metro","Siliguri","ZO Kolkata"],"Lucknow":["Ayodhya","Gorakhpur","Kanpur","Lucknow North","Lucknow South","ZO Lucknow"],"Mangaluru":["Belagavi","Goa","Hassan","Hubballi","Mangaluru","Shivamogga","Udupi","ZO Mangaluru"],"Meerut":["Agra","Barelly","Dehradun","Haldwani","Meerut","Muzaffarnagar","ZO Meerut"],"Mumbai":["Mumbai Andheri","Mumbai Borivali","Mumbai South","Mumbai Thane","Mumbai Vashi","ZO Mumbai"],"New Delhi":["Delhi North","Delhi South","Ghaziabad","Gurugram","New Delhi","ZO New Delhi"],"Patna":["Bhagalpur","Dhanbad","Gaya","Patna","Ranchi","Samastipur","ZO Patna"],"Pune":["Ahilyanagar","Amaravati","Greater Pune","Kolhapur","Nagpur","Nasik","Pune Metro","ZO Pune"],"Tirupati":["Anantapur","Kadapa","Kurnool","Nellore","Tirupathi","ZO Tirupati"],"Varanasi":["Azamgarh North","Azamgarh South","Chandauli","Ghazipur East","Ghazipur West","Jaunpur North","Jaunpur South","Mau","Prayagraj","Varanasi","ZO Varanasi"],"Vijayawada":["Bhimavaram","Eluru","Guntur","Machilipatnam","Narasaraopet","Ongole","Vijayawada","ZO Vijayawada"],"Visakhapatnam":["Kakinada","Rajahmundry","Srikakulam","Visakhapatnam","Vizinagaram","ZO Visakhapatnam"]};
 const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","Anantapur","Annamayya","Bapatla","Chittoor","East Godavari","Eluru","Guntur","Kakinada","Konaseema","Krishna","Kurnool","Nandyal","NTR","Palnadu","Parvathipuram Manyam","Prakasam","Srikakulam","Sri Sathya Sai","Tirupati","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"],"Arunachal Pradesh":["Anjaw","Changlang","Dibang Valley","East Kameng","East Siang","Kamle","Kra Daadi","Kurung Kumey","Lepa Rada","Lohit","Longding","Lower Dibang Valley","Lower Siang","Lower Subansiri","Namsai","Pakke Kessang","Papum Pare","Shi Yomi","Siang","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"],"Assam":["Bajali","Baksa","Barpeta","Biswanath","Bongaigaon","Cachar","Charaideo","Chirang","Darrang","Dhemaji","Dhubri","Dibrugarh","Dima Hasao","Goalpara","Golaghat","Hailakandi","Hojai","Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari","Sivasagar","Sonitpur","South Salmara-Mankachar","Tamulpur","Tinsukia","Udalguri","West Karbi Anglong"],"Bihar":["Araria","Arwal","Aurangabad","Banka","Begusarai","Bhagalpur","Bhojpur","Buxar","Darbhanga","East Champaran","Gaya","Gopalganj","Jamui","Jehanabad","Kaimur","Katihar","Khagaria","Kishanganj","Lakhisarai","Madhepura","Madhubani","Munger","Muzaffarpur","Nalanda","Nawada","Patna","Purnia","Rohtas","Saharsa","Samastipur","Saran","Sheikhpura","Sheohar","Sitamarhi","Siwan","Supaul","Vaishali","West Champaran"],"Chhattisgarh":["Balod","Baloda Bazar","Balrampur","Bastar","Bemetara","Bijapur","Bilaspur","Dantewada","Dhamtari","Durg","Gariaband","Gaurela-Pendra-Marwahi","Janjgir-Champa","Jashpur","Kabirdham","Kanker","Kondagaon","Korba","Koriya","Mahasamund","Manendragarh","Mungeli","Narayanpur","Raigarh","Raipur","Rajnandgaon","Sakti","Sarangarh-Bilaigarh","Sukma","Surajpur","Surguja"],"Goa":["North Goa","South Goa"],"Gujarat":["Ahmedabad","Amreli","Anand","Aravalli","Banaskantha","Bharuch","Bhavnagar","Botad","Chhota Udaipur","Dahod","Dang","Devbhumi Dwarka","Gandhinagar","Gir Somnath","Jamnagar","Junagadh","Kheda","Kutch","Mahisagar","Mehsana","Morbi","Narmada","Navsari","Panchmahal","Patan","Porbandar","Rajkot","Sabarkantha","Surat","Surendranagar","Tapi","Vadodara","Valsad"],"Haryana":["Ambala","Bhiwani","Charkhi Dadri","Faridabad","Fatehabad","Gurugram","Hisar","Jhajjar","Jind","Kaithal","Karnal","Kurukshetra","Mahendragarh","Nuh","Palwal","Panchkula","Panipat","Rewari","Rohtak","Sirsa","Sonipat","Yamunanagar"],"Himachal Pradesh":["Bilaspur","Chamba","Hamirpur","Kangra","Kinnaur","Kullu","Lahaul and Spiti","Mandi","Shimla","Sirmaur","Solan","Una"],"Jharkhand":["Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribagh","Jamtara","Khunti","Koderma","Latehar","Lohardaga","Pakur","Palamu","Ramgarh","Ranchi","Sahebganj","Seraikela Kharsawan","Simdega","West Singhbhum"],"Karnataka":["Bagalkot","Ballari","Belagavi","Bengaluru Rural","Bengaluru Urban","Bidar","Chamarajanagar","Chikkaballapur","Chikkamagaluru","Chitradurga","Dakshina Kannada","Davangere","Dharwad","Gadag","Hassan","Haveri","Kalaburagi","Kodagu","Kolar","Koppal","Mandya","Mysuru","Raichur","Ramanagara","Shivamogga","Tumakuru","Udupi","Uttara Kannada","Vijayapura","Vijayanagara","Yadgir"],"Kerala":["Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"],"Madhya Pradesh":["Agar Malwa","Alirajpur","Anuppur","Ashoknagar","Balaghat","Barwani","Betul","Bhind","Bhopal","Burhanpur","Chhatarpur","Chhindwara","Damoh","Datia","Dewas","Dhar","Dindori","Guna","Gwalior","Harda","Hoshangabad","Indore","Jabalpur","Jhabua","Katni","Khandwa","Khargone","Mandla","Mandsaur","Morena","Narsinghpur","Neemuch","Niwari","Panna","Raisen","Rajgarh","Ratlam","Rewa","Sagar","Satna","Sehore","Seoni","Shahdol","Shajapur","Sheopur","Shivpuri","Sidhi","Singrauli","Tikamgarh","Ujjain","Umaria","Vidisha"],"Maharashtra":["Ahmednagar","Akola","Amravati","Aurangabad","Beed","Bhandara","Buldhana","Chandrapur","Dhule","Gadchiroli","Gondia","Hingoli","Jalgaon","Jalna","Kolhapur","Latur","Mumbai City","Mumbai Suburban","Nagpur","Nanded","Nandurbar","Nashik","Osmanabad","Palghar","Parbhani","Pune","Raigad","Ratnagiri","Sangli","Satara","Sindhudurg","Solapur","Thane","Wardha","Washim","Yavatmal"],"Manipur":["Bishnupur","Chandel","Churachandpur","Imphal East","Imphal West","Jiribam","Kakching","Kamjong","Kangpokpi","Noney","Pherzawl","Senapati","Tamenglong","Tengnoupal","Thoubal","Ukhrul"],"Meghalaya":["East Garo Hills","East Jaintia Hills","East Khasi Hills","North Garo Hills","Ri Bhoi","South Garo Hills","South West Garo Hills","South West Khasi Hills","West Garo Hills","West Jaintia Hills","West Khasi Hills"],"Mizoram":["Aizawl","Champhai","Hnahthial","Khawzawl","Kolasib","Lawngtlai","Lunglei","Mamit","Saiha","Saitual","Serchhip"],"Nagaland":["Dimapur","Kiphire","Kohima","Longleng","Mokokchung","Mon","Noklak","Peren","Phek","Tuensang","Wokha","Zunheboto"],"Odisha":["Angul","Balangir","Balasore","Bargarh","Bhadrak","Boudh","Cuttack","Deogarh","Dhenkanal","Gajapati","Ganjam","Jagatsinghpur","Jajpur","Jharsuguda","Kalahandi","Kandhamal","Kendrapara","Kendujhar","Khordha","Koraput","Malkangiri","Mayurbhanj","Nabarangpur","Nayagarh","Nuapada","Puri","Rayagada","Sambalpur","Subarnapur","Sundergarh"],"Punjab":["Amritsar","Barnala","Bathinda","Faridkot","Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur","Hoshiarpur","Jalandhar","Kapurthala","Ludhiana","Malerkotla","Mansa","Moga","Mohali","Muktsar","Pathankot","Patiala","Rupnagar","Sangrur","Shaheed Bhagat Singh Nagar","Tarn Taran"],"Rajasthan":["Ajmer","Alwar","Banswara","Baran","Barmer","Bharatpur","Bhilwara","Bikaner","Bundi","Chittorgarh","Churu","Dausa","Dholpur","Dungarpur","Hanumangarh","Jaipur","Jaisalmer","Jalore","Jhalawar","Jhunjhunu","Jodhpur","Karauli","Kota","Nagaur","Pali","Pratapgarh","Rajsamand","Sawai Madhopur","Sikar","Sirohi","Sri Ganganagar","Tonk","Udaipur"],"Sikkim":["East Sikkim","North Sikkim","Pakyong","Soreng","South Sikkim","West Sikkim"],"Tamil Nadu":["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kancheepuram","Kanyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar"],"Telangana":["Adilabad","Bhadradri Kothagudem","Hanamkonda","Hyderabad","Jagtial","Jangaon","Jayashankar Bhupalpally","Jogulamba Gadwal","Kamareddy","Karimnagar","Khammam","Kumuram Bheem","Mahabubabad","Mahabubnagar","Mancherial","Medak","Medchal-Malkajgiri","Mulugu","Nagarkurnool","Nalgonda","Narayanpet","Nirmal","Nizamabad","Peddapalli","Rajanna Sircilla","Rangareddy","Sangareddy","Siddipet","Suryapet","Vikarabad","Wanaparthy","Warangal","Yadadri Bhuvanagiri"],"Tripura":["Dhalai","Gomati","Khowai","North Tripura","Sepahijala","South Tripura","Unakoti","West Tripura"],"Uttar Pradesh":["Agra","Aligarh","Ambedkar Nagar","Amethi","Amroha","Auraiya","Ayodhya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bhadohi","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Farrukhabad","Fatehpur","Firozabad","Gautam Buddha Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kushinagar","Lakhimpur Kheri","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Prayagraj","Rae Bareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],"Uttarakhand":["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"],"West Bengal":["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"],"Andaman and Nicobar Islands":["Nicobars","North and Middle Andaman","South Andaman"],"Chandigarh (UT)":["Chandigarh"],"Dadra and Nagar Haveli and Daman and Diu":["Dadra and Nagar Haveli","Daman","Diu"],"Delhi":["Central Delhi","East Delhi","New Delhi","North Delhi","North East Delhi","North West Delhi","Shahdara","South Delhi","South East Delhi","South West Delhi","West Delhi"],"Jammu and Kashmir":["Anantnag","Bandipora","Baramulla","Budgam","Doda","Ganderbal","Jammu","Kathua","Kishtwar","Kulgam","Kupwara","Poonch","Pulwama","Rajouri","Ramban","Reasi","Samba","Shopian","Srinagar","Udhampur"],"Ladakh":["Kargil","Leh"],"Lakshadweep":["Lakshadweep"],"Puducherry":["Karaikal","Mahe","Puducherry","Yanam"]};
 
-/* STORAGE */
+
 /* ============================================================
-   GOOGLE APPS SCRIPT URL — PASTE YOUR URL BELOW
-   This is the single source of truth. It works on every
-   computer without any admin setup.
-   Replace PASTE_YOUR_GAS_URL_HERE with your actual URL.
+   CONFIGURATION
 ============================================================ */
-const GAS_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycbw1NWsOcm6r6m0WO7dQKU8xvJ7H4QgLy8g6LEUPLwEh1E3xPlonPS7T5S2DVEmbWb2w/exec';
+// Paste your Apps Script Web App URL between the quotes below.
+// This works on every computer without any admin setup.
+const GAS_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycby75RHbTXtZ0LtBSpJaQWr_l5pULbit9q4Pe-5y-eL52CU-6gsOz5ATUdvVthXrPlKY/exec';
 
 function getGasUrl(){
-  // Hardcoded URL takes priority — works on every computer
-  if(GAS_URL_HARDCODED && GAS_URL_HARDCODED!=='PASTE_YOUR_GAS_URL_HERE')
-    return GAS_URL_HARDCODED;
-  // Fallback: admin settings (for testing without editing HTML)
-  try{
-    var fromSettings=localStorage.getItem('ubksa_gasurl')||'';
-    if(fromSettings && fromSettings!=='PASTE_YOUR_GAS_URL_HERE') return fromSettings;
-  }catch(e){}
+  if(GAS_URL_HARDCODED && GAS_URL_HARDCODED!=='PASTE_YOUR_GAS_URL_HERE') return GAS_URL_HARDCODED;
+  try{ var s=localStorage.getItem('ubksa_gasurl')||''; if(s) return s; }catch(e){}
   return '';
 }
 
-const SK='ubksa_subs5',SS='ubksa_settings5',SA='ubksa_admauth5';
-const getSubs=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
-const saveSubs=d=>localStorage.setItem(SK,JSON.stringify(d));
-const getSettings=()=>{const def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:'',gasUrl:''};try{return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}'));}catch(e){return def;}};
-const saveSettings=s=>localStorage.setItem(SS,JSON.stringify(s));
-const isAdminIn=()=>sessionStorage.getItem(SA)==='true';
-const setAdminIn=v=>v?sessionStorage.setItem(SA,'true'):sessionStorage.removeItem(SA);
-
-// Hash function for privacy (simple but effective for this use case)
-// DOB stored as plain text for reliable cross-device verification
-function hashCred(empId, dob){
-  // Simply return the DOB string - no hashing needed
-  return dob;
+/* ============================================================
+   STORAGE
+============================================================ */
+const SK='ubksa_subs5', SS='ubksa_settings5', SA='ubksa_admauth5';
+function getSubs(){ try{ return JSON.parse(localStorage.getItem(SK)||'[]'); }catch(e){ return []; } }
+function saveSubs(d){ localStorage.setItem(SK,JSON.stringify(d)); }
+function getSettings(){
+  var def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:'',gasUrl:''};
+  try{ return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}')); }catch(e){ return def; }
 }
-
-// Officer session
-let currentOfficer={empId:'',dob:'',wa:''};
-let isEditMode=false;
+function saveSettings(s){ localStorage.setItem(SS,JSON.stringify(s)); }
+function isAdminIn(){ return sessionStorage.getItem(SA)==='true'; }
+function setAdminIn(v){ v ? sessionStorage.setItem(SA,'true') : sessionStorage.removeItem(SA); }
 
 /* ============================================================
    NAVIGATION
 ============================================================ */
-const PAGES=['officerLoginPage','formPage','adminLoginPage','adminDashboard','successPage'];
-function showPage(id){PAGES.forEach(p=>document.getElementById(p).classList.toggle('hidden',p!==id));}
-function showOfficerLogin(){showPage('officerLoginPage');currentOfficer={empId:'',dob:'',wa:''};isEditMode=false;}
-function showAdminLogin(){showPage('adminLoginPage');document.getElementById('au').focus();}
-function showDashboard(){showPage('adminDashboard');refreshDash();}
+var PAGES=['officerLoginPage','formPage','adminLoginPage','adminDashboard','successPage'];
+function showPage(id){ PAGES.forEach(function(p){ document.getElementById(p).classList.toggle('hidden',p!==id); }); }
+function showOfficerLogin(){ showPage('officerLoginPage'); currentOfficer={empId:'',dob:'',wa:''}; isEditMode=false; }
+function showAdminLogin(){ showPage('adminLoginPage'); var el=document.getElementById('au'); if(el)el.focus(); }
+function showDashboard(){ showPage('adminDashboard'); refreshDash(); }
+function startNew(){ resetFormFields(); showPage('formPage'); }
+
+/* ============================================================
+   OFFICER SESSION
+============================================================ */
+var currentOfficer={empId:'',dob:'',wa:''};
+var isEditMode=false;
+var selFile=null;
 
 /* ============================================================
    OFFICER LOGIN
 ============================================================ */
 async function doOfficerLogin(){
-  const empId=(document.getElementById('ol_empid')||{value:''}).value.trim();
-  const dob=(document.getElementById('ol_dob')||{value:''}).value;
-  const wa=(document.getElementById('ol_wa')||{value:''}).value.trim();
-  const errEl=document.getElementById('ol_err');
-  const btn=document.querySelector('#officerLoginPage .btn-primary');
-  if(errEl){errEl.classList.add('hidden');errEl.innerHTML='';}
+  var empId=(document.getElementById('ol_empid')||{value:''}).value.trim();
+  var dob=(document.getElementById('ol_dob')||{value:''}).value;
+  var wa=(document.getElementById('ol_wa')||{value:''}).value.trim();
+  var errEl=document.getElementById('ol_err');
+  var btn=document.querySelector('#officerLoginPage .btn-primary');
+  if(errEl){errEl.classList.add('hidden'); errEl.innerHTML='';}
 
   function showErr(msg){
-    if(errEl){
-      errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>'+msg+'</div></div>';
-      errEl.classList.remove('hidden');
-    }
-    if(btn){btn.disabled=false;btn.innerHTML='&#128274; Proceed to Form';}
+    if(errEl){ errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>'+msg+'</div></div>'; errEl.classList.remove('hidden'); }
+    if(btn){ btn.disabled=false; btn.innerHTML='&#128274; Proceed to Form'; }
   }
-  function setBtn(txt,dis){if(btn){btn.disabled=dis;btn.innerHTML=txt;}}
+  function setBtn(txt,dis){ if(btn){ btn.disabled=dis; btn.innerHTML=txt; } }
 
-  if(!/^\d{6}$/.test(empId)){showErr('Employee ID must be exactly 6 digits.');return;}
-  if(!dob){showErr('Please enter your Date of Birth.');return;}
-  if(!/^\d{10}$/.test(wa)){showErr('WhatsApp number must be exactly 10 digits.');return;}
+  if(!/^\d{6}$/.test(empId)){ showErr('Employee ID must be exactly 6 digits.'); return; }
+  if(!dob){ showErr('Please enter your Date of Birth.'); return; }
+  if(!/^\d{10}$/.test(wa)){ showErr('WhatsApp number must be exactly 10 digits.'); return; }
 
-  currentOfficer={empId,dob,wa};
+  currentOfficer={empId:empId,dob:dob,wa:wa};
   setBtn('<span class="spin"></span>&nbsp; Checking...',true);
 
-  // 1. Check localStorage (same browser)
-  const localSubs=getSubs();
-  let existing=localSubs.find(function(s){return s.empId===empId;});
+  // 1. Check localStorage first
+  var localSubs=getSubs();
+  var existing=localSubs.find(function(s){ return s.empId===empId; });
 
-  // 2. If not found locally, fetch from Google Sheets (cross-browser/device)
-  const activeGas=getGasUrl();
+  // 2. If not found locally, fetch from GAS
+  var activeGas=getGasUrl();
   if(!existing && activeGas){
     setBtn('<span class="spin"></span>&nbsp; Checking records...',true);
     try{
-      var gasGetUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
-      var gasResp=await fetch(gasGetUrl,{method:'GET',cache:'no-cache'});
-      if(gasResp.ok){
-        var gasResult=await gasResp.json();
-        if(gasResult.found && gasResult.data){
-          existing=gasResult.data;
-          var updated=localSubs.filter(function(s){return s.empId!==empId;});
+      var resp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+      if(resp.ok){
+        var result=await resp.json();
+        if(result.found && result.data){
+          existing=result.data;
+          // Cache locally
+          var updated=localSubs.filter(function(s){ return s.empId!==empId; });
           updated.push(existing);
           saveSubs(updated);
         }
-      } else {
-        console.warn('GAS GET returned HTTP', gasResp.status);
       }
-    }catch(gasErr){
-      console.warn('GAS GET failed (proceeding offline):', gasErr.message);
-    }
+    }catch(err){ console.warn('GAS GET failed:', err.message); }
   }
 
   if(existing){
-    // Verify: stored DOB must match entered DOB, and WhatsApp must match
-    const storedDob=existing.dobStored||'';
-    const dobOk = !storedDob || (storedDob===dob);
-    // Strip non-digits for comparison (handles sheet formatting like +91 prefix)
-    const cleanStored=(existing.whatsapp||'').replace(/\D/g,'').slice(-10);
-    const cleanEntered=wa.replace(/\D/g,'').slice(-10);
-    const waOk = (cleanStored===cleanEntered);
+    // Verify DOB — stored as plain YYYY-MM-DD
+    var storedDob=String(existing.dobStored||existing.dobHash||'').trim();
+    var enteredDob=String(dob).trim();
+    var dobOk = !storedDob || (storedDob===enteredDob);
+
+    // Verify WhatsApp — digits only, last 10
+    var storedWa=String(existing.whatsapp||'').replace(/\D/g,'').slice(-10);
+    var enteredWa=wa.replace(/\D/g,'').slice(-10);
+    var waOk=(storedWa===enteredWa);
 
     if(!waOk){
-      showErr('The WhatsApp number entered does not match our records for Employee ID '+empId+
-        '. Entered: '+cleanEntered+', Stored: '+cleanStored+'(last 10 digits)');
+      showErr('The WhatsApp number entered does not match our records for Employee ID '+empId+'.');
       return;
     }
     if(!dobOk){
@@ -883,318 +873,243 @@ async function doOfficerLogin(){
       return;
     }
 
-    // Access granted
     isEditMode=true;
     showPage('formPage');
     requestAnimationFrame(function(){
       initDropdowns();
       populateForm(existing);
-      const eb=document.getElementById('editBanner');if(eb)eb.classList.remove('hidden');
-      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#9998; Update My Details';
+      var eb=document.getElementById('editBanner'); if(eb) eb.classList.remove('hidden');
+      var sb=document.getElementById('submitBtn'); if(sb) sb.innerHTML='&#9998; Update My Details';
       setBtn('&#128274; Proceed to Form',false);
     });
-
   } else {
-    // New entry
     isEditMode=false;
     showPage('formPage');
     requestAnimationFrame(function(){
       initDropdowns();
       resetFormFields();
-      const ei=document.getElementById('f_empid');if(ei)ei.value=empId;
-      const wi=document.getElementById('f_wa');if(wi)wi.value=wa;
-      const eb=document.getElementById('editBanner');if(eb)eb.classList.add('hidden');
-      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
+      var ei=document.getElementById('f_empid'); if(ei) ei.value=empId;
+      var wi=document.getElementById('f_wa'); if(wi) wi.value=wa;
+      var eb=document.getElementById('editBanner'); if(eb) eb.classList.add('hidden');
+      var sb=document.getElementById('submitBtn'); if(sb) sb.innerHTML='&#10003; Submit Transfer Request';
       setBtn('&#128274; Proceed to Form',false);
     });
   }
-}
-
-/* ============================================================
-   POPULATE FORM FOR EDIT
-============================================================ */
-function populateForm(s){
-  resetFormFields();
-  const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
-
-  sv('f_empid',s.empId);sv('f_wa',s.whatsapp);sv('f_name',s.name);
-  sv('f_cat',s.officerCategory);sv('f_scale',s.officerScale);
-  sv('f_promoTrack',s.promoTrack||'');onPromoTrackChange();sv('f_promoDate',s.promoDateRaw||'');
-  sv('f_assoc',s.association);onAssocChange();
-
-  sv('f_pZone',s.presentZone);onPresentZoneChange();
-  sv('f_branch',s.presentBranch);sv('f_doj',s.dateJoiningZone);
-
-  if(s.prevZone){
-    document.getElementById('f_prevZoneToggle').checked=true;
-    onPrevZoneToggle();
-    sv('f_prevZone',s.prevZone);onPrevZoneChange();
-    sv('f_prevDoj',s.prevDoj||'');
-  }
-
-  sv('f_tCat',s.transferCategory);onTransferCatChange();
-  sv('f_rZone',s.requestedZone);onReqZoneChange();
-  sv('f_details',s.transferDetails||'');
-  document.getElementById('dcount').textContent=(s.transferDetails||'').length;
-
-  sv('f_state',s.domicileState);onStateChange();
-  sv('f_pin',s.pincode);
-
-  // Use requestAnimationFrame to allow DOM to update before setting dependent dropdowns
-  requestAnimationFrame(()=>{
-    sv('f_pRegion',s.presentRegion);
-    if(s.prevZone){ sv('f_prevRegion',s.prevRegion||''); }
-    sv('f_dist',s.domicileDistrict);
-    requestAnimationFrame(()=>{
-      const r1=document.getElementById('f_rr1'),r2=document.getElementById('f_rr2'),r3=document.getElementById('f_rr3');
-      if(r1)r1.value=s.reqRegion1||'';
-      if(r2)r2.value=s.reqRegion2||'';
-      if(r3)r3.value=s.reqRegion3||'';
-      onDojChange();
-      updateProgress();
-    });
-  });
 }
 
 /* ============================================================
    INIT DROPDOWNS
 ============================================================ */
 function initDropdowns(){
-  const pz=document.getElementById('f_pZone');
-  if(pz){pz.innerHTML='<option value="">-- Select Zone --</option>';ZONES.forEach(z=>pz.add(new Option(z,z)));}
-  const pvz=document.getElementById('f_prevZone');
-  if(pvz){pvz.innerHTML='<option value="">-- Select Zone --</option>';ZONES.forEach(z=>pvz.add(new Option(z,z)));}
-  const ds=document.getElementById('f_state');
-  if(ds){ds.innerHTML='<option value="">-- Select State / UT --</option>';Object.keys(STATES_DISTRICTS).sort().forEach(s=>ds.add(new Option(s,s)));}
+  var pz=document.getElementById('f_pZone');
+  if(pz){ pz.innerHTML='<option value="">-- Select Zone --</option>'; ZONES.forEach(function(z){ pz.add(new Option(z,z)); }); }
+  var pvz=document.getElementById('f_prevZone');
+  if(pvz){ pvz.innerHTML='<option value="">-- Select Zone --</option>'; ZONES.forEach(function(z){ pvz.add(new Option(z,z)); }); }
+  var ds=document.getElementById('f_state');
+  if(ds){ ds.innerHTML='<option value="">-- Select State / UT --</option>'; Object.keys(STATES_DISTRICTS).sort().forEach(function(s){ ds.add(new Option(s,s)); }); }
 }
 
 /* ============================================================
    FORM HANDLERS
 ============================================================ */
 function onPromoTrackChange(){
-  const v=document.getElementById('f_promoTrack').value;
-  const lbl=document.getElementById('f_promoDateLabel');
-  if(v==='Directly Recruited')lbl.innerHTML='Date of Direct Recruitment <span class="req">*</span>';
-  else if(v)lbl.innerHTML='Date of Promotion to Present Scale <span class="req">*</span>';
+  var v=document.getElementById('f_promoTrack').value;
+  var lbl=document.getElementById('f_promoDateLabel');
+  if(!lbl) return;
+  if(v==='Directly Recruited') lbl.innerHTML='Date of Direct Recruitment <span class="req">*</span>';
+  else if(v) lbl.innerHTML='Date of Promotion to Present Scale <span class="req">*</span>';
   else lbl.innerHTML='Date of Promotion / Recruitment <span class="req">*</span>';
 }
 
 function onPresentZoneChange(){
-  const zone=document.getElementById('f_pZone').value;
-  const r=document.getElementById('f_pRegion');
+  var zone=document.getElementById('f_pZone').value;
+  var r=document.getElementById('f_pRegion');
   r.innerHTML='';
-  if(!zone){r.add(new Option('-- Select Zone first --',''));r.disabled=true;}
-  else{r.disabled=false;r.add(new Option('-- Select Region --',''));(ZONE_REGIONS[zone]||[]).forEach(x=>r.add(new Option(x,x)));}
+  if(!zone){ r.add(new Option('-- Select Zone first --','')); r.disabled=true; }
+  else{ r.disabled=false; r.add(new Option('-- Select Region --','')); (ZONE_REGIONS[zone]||[]).forEach(function(x){ r.add(new Option(x,x)); }); }
   updateReqZoneOptions();
-  onPrevDojChange();// re-validate if prev doj was set
 }
 
 function onPrevZoneToggle(){
-  const on=document.getElementById('f_prevZoneToggle').checked;
-  const sec=document.getElementById('prevZoneSec');
-  sec.classList.toggle('hidden',!on);
+  var on=document.getElementById('f_prevZoneToggle').checked;
+  var sec=document.getElementById('prevZoneSec'); if(sec) sec.classList.toggle('hidden',!on);
   if(!on){
-    document.getElementById('f_prevZone').value='';
-    document.getElementById('f_prevRegion').innerHTML='<option value="">-- Select Zone first --</option>';
-    document.getElementById('f_prevRegion').disabled=true;
-    document.getElementById('f_prevDoj').value='';
-    document.getElementById('prevDojErr').classList.add('hidden');
+    var pz=document.getElementById('f_prevZone'); if(pz) pz.value='';
+    var pr=document.getElementById('f_prevRegion'); if(pr){ pr.innerHTML='<option value="">-- Select Zone first --</option>'; pr.disabled=true; }
+    var pd=document.getElementById('f_prevDoj'); if(pd) pd.value='';
+    var pe=document.getElementById('prevDojErr'); if(pe){ pe.classList.add('hidden'); pe.innerHTML=''; }
   }
 }
 
 function onPrevZoneChange(){
-  const zone=document.getElementById('f_prevZone').value;
-  const r=document.getElementById('f_prevRegion');
+  var zone=document.getElementById('f_prevZone').value;
+  var r=document.getElementById('f_prevRegion');
   r.innerHTML='';
-  if(!zone){r.add(new Option('-- Select Zone first --',''));r.disabled=true;}
-  else{r.disabled=false;r.add(new Option('-- Select Region --',''));(ZONE_REGIONS[zone]||[]).forEach(x=>r.add(new Option(x,x)));}
+  if(!zone){ r.add(new Option('-- Select Zone first --','')); r.disabled=true; }
+  else{ r.disabled=false; r.add(new Option('-- Select Region --','')); (ZONE_REGIONS[zone]||[]).forEach(function(x){ r.add(new Option(x,x)); }); }
 }
 
 function onPrevDojChange(){
-  const prevEl=document.getElementById('f_prevDoj');
-  const presEl=document.getElementById('f_doj');
-  const errEl=document.getElementById('prevDojErr');
-  if(!prevEl||!presEl||!errEl) return; // guard - elements may not exist yet
-  const prevDoj=prevEl.value;
-  const presentDoj=presEl.value;
+  var prevDoj=document.getElementById('f_prevDoj').value;
+  var presentDoj=document.getElementById('f_doj').value;
+  var errEl=document.getElementById('prevDojErr');
   if(prevDoj&&presentDoj&&new Date(prevDoj)>=new Date(presentDoj)){
-    errEl.innerHTML='<div class="alert a-err" style="margin-top:6px"><span class="a-ico">&#10060;</span><div>Date of joining the previous zone must be <strong>before</strong> the date of joining the present zone ('+new Date(presentDoj).toLocaleDateString('en-IN')+').</div></div>';
-    errEl.classList.remove('hidden');
-  }else{errEl.classList.add('hidden');errEl.innerHTML='';}
+    if(errEl){ errEl.innerHTML='<div class="alert a-err" style="margin-top:6px"><span class="a-ico">&#10060;</span><div>Date of joining the previous zone must be <strong>before</strong> the date of joining the present zone.</div></div>'; errEl.classList.remove('hidden'); }
+  } else { if(errEl){ errEl.classList.add('hidden'); errEl.innerHTML=''; } }
 }
 
 function updateReqZoneOptions(){
-  const pz=document.getElementById('f_pZone').value;
-  const cat=document.getElementById('f_tCat').value;
-  const rz=document.getElementById('f_rZone');
-  const prev=rz.value;
+  var pz=document.getElementById('f_pZone').value;
+  var cat=document.getElementById('f_tCat').value;
+  var rz=document.getElementById('f_rZone');
+  var prev=rz.value;
   rz.innerHTML='';
-  if(!cat){rz.add(new Option('-- Select Transfer Category first --',''));rz.disabled=true;return;}
+  if(!cat){ rz.add(new Option('-- Select Transfer Category first --','')); rz.disabled=true; return; }
   rz.disabled=false;
   rz.add(new Option('-- Select Zone --',''));
-  ZONES.filter(z=>z!==pz).forEach(z=>rz.add(new Option(z,z)));
-  if(prev&&prev!==pz)rz.value=prev;
+  ZONES.filter(function(z){ return z!==pz; }).forEach(function(z){ rz.add(new Option(z,z)); });
+  if(prev&&prev!==pz) rz.value=prev;
   onReqZoneChange();
 }
 
 function onReqZoneChange(){
-  const zone=document.getElementById('f_rZone').value;
-  const sec=document.getElementById('reqRegSec');
-  const container=document.getElementById('rprefsContainer');
-  const lbl=document.getElementById('reqRegLabel');
+  var zone=document.getElementById('f_rZone').value;
+  var sec=document.getElementById('reqRegSec');
+  var container=document.getElementById('rprefsContainer');
+  var lbl=document.getElementById('reqRegLabel');
   container.innerHTML='';
-  if(!zone){sec.classList.add('hidden');return;}
+  if(!zone){ sec.classList.add('hidden'); return; }
   sec.classList.remove('hidden');
-  const cat=document.getElementById('f_tCat').value;
-  const multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
-  const count=multi?3:1;
+  var cat=document.getElementById('f_tCat').value;
+  var multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
+  var count=multi?3:1;
   lbl.innerHTML=multi?'Requested Region(s) - 3 Preferences <span class="req">*</span>':'Requested Region <span class="req">*</span>';
-  // Filter out Zonal Offices (ZO*) from requested region preferences
-  const allRegions=ZONE_REGIONS[zone]||[];
-  const regions=allRegions.filter(r=>!r.startsWith('ZO '));
-  for(let i=1;i<=count;i++){
-    const row=document.createElement('div');row.className='rpref-row';
-    if(multi){const l=document.createElement('label');l.className='rpref-lbl';l.textContent='Preference '+i;row.appendChild(l);}
-    const sel=document.createElement('select');sel.id='f_rr'+i;
+  var regions=(ZONE_REGIONS[zone]||[]).filter(function(r){ return !r.startsWith('ZO '); });
+  for(var i=1;i<=count;i++){
+    var row=document.createElement('div'); row.className='rpref-row';
+    if(multi){ var l=document.createElement('label'); l.className='rpref-lbl'; l.textContent='Preference '+i; row.appendChild(l); }
+    var sel=document.createElement('select'); sel.id='f_rr'+i;
     sel.add(new Option('-- Select Region --',''));
-    regions.forEach(r=>sel.add(new Option(r,r)));
-    sel.addEventListener('change',()=>syncRegionPrefs(count,regions));
-    row.appendChild(sel);container.appendChild(row);
+    regions.forEach(function(r){ sel.add(new Option(r,r)); });
+    sel.addEventListener('change',function(){ syncRegionPrefs(count,regions); });
+    row.appendChild(sel); container.appendChild(row);
   }
 }
 
 function syncRegionPrefs(count,allRegions){
-  if(count<2)return;
-  const vals=[];
-  for(let i=1;i<=count;i++){const s=document.getElementById('f_rr'+i);if(s)vals.push(s.value);}
-  for(let i=1;i<=count;i++){
-    const sel=document.getElementById('f_rr'+i);if(!sel)continue;
-    const cur=sel.value;const others=vals.filter((_,idx)=>idx!==i-1&&_!=='');
-    sel.innerHTML='';sel.add(new Option('-- Select Region --',''));
-    allRegions.forEach(r=>{if(!others.includes(r)||r===cur)sel.add(new Option(r,r));});
+  if(count<2) return;
+  var vals=[];
+  for(var i=1;i<=count;i++){ var s=document.getElementById('f_rr'+i); if(s) vals.push(s.value); }
+  for(var i=1;i<=count;i++){
+    var sel=document.getElementById('f_rr'+i); if(!sel) continue;
+    var cur=sel.value;
+    var others=vals.filter(function(v,idx){ return idx!==i-1&&v!==''; });
+    sel.innerHTML=''; sel.add(new Option('-- Select Region --',''));
+    allRegions.forEach(function(r){ if(!others.includes(r)||r===cur) sel.add(new Option(r,r)); });
     sel.value=cur;
   }
 }
 
 function onStateChange(){
-  const st=document.getElementById('f_state').value;
-  const dd=document.getElementById('f_dist');
+  var st=document.getElementById('f_state').value;
+  var dd=document.getElementById('f_dist');
   dd.innerHTML='';
-  if(!st){dd.add(new Option('-- Select State first --',''));dd.disabled=true;return;}
-  dd.disabled=false;dd.add(new Option('-- Select District --',''));
-  (STATES_DISTRICTS[st]||[]).sort().forEach(d=>dd.add(new Option(d,d)));
+  if(!st){ dd.add(new Option('-- Select State first --','')); dd.disabled=true; return; }
+  dd.disabled=false; dd.add(new Option('-- Select District --',''));
+  (STATES_DISTRICTS[st]||[]).sort().forEach(function(d){ dd.add(new Option(d,d)); });
 }
 
 function onTransferCatChange(){
-  const cat=document.getElementById('f_tCat').value;
-  document.getElementById('specialSec').classList.toggle('hidden',!cat||cat==='Repatriation to Parent Zone');
+  var cat=document.getElementById('f_tCat').value;
+  var sec=document.getElementById('specialSec');
+  if(sec) sec.classList.toggle('hidden',!cat||cat==='Repatriation to Parent Zone');
   updateReqZoneOptions();
 }
 
 function onAssocChange(){
-  const assocEl=document.getElementById('f_assoc');
-  const w=document.getElementById('assocWarn');
-  if(!assocEl||!w) return;
-  const v=assocEl.value;
+  var v=document.getElementById('f_assoc').value;
+  var w=document.getElementById('assocWarn');
+  if(!w) return;
   if(v==='Others'){
     w.innerHTML='<div class="alert a-err"><span class="a-ico">&#9888;</span><div><strong>Association Notice:</strong> You have selected an association other than AIBOC. To be represented in negotiations, please take membership of AIBOC. Kindly contact your nearest AIBOC representative for membership details.</div></div>';
     w.classList.remove('hidden');
-  }else{w.innerHTML='';w.classList.add('hidden');}
+  } else { w.innerHTML=''; w.classList.add('hidden'); }
 }
 
 function onDojChange(){
-  const dojEl=document.getElementById('f_doj');
-  const w=document.getElementById('dojWarn');
-  if(!dojEl||!w){onPrevDojChange();return;}
-  const val=dojEl.value; // 'YYYY-MM-DD'
-  if(!val){w.classList.add('hidden');w.innerHTML='';onPrevDojChange();return;}
-  const s=getSettings();
-  const minYrs=parseInt(s.minYears)||3;
-
-  // Parse as local date parts to avoid UTC offset issues
-  const [dy,dm,dd]=val.split('-').map(Number);
-
-  // Cutoff date parts
-  const cutoffStr=s.cutoffDate||'2026-06-30';
-  const [cy,cm,cd]=cutoffStr.split('-').map(Number);
-
-  // Threshold = cutoff minus minYrs years (same month/day)
-  const ty=cy-minYrs, tm=cm, td=cd;
-
-  // Compare: show warning if DOJ is AFTER threshold (i.e. > threshold date)
-  // Officer joined after threshold => has not completed N years by cutoff
-  const dojAfterThreshold=(dy>ty)||( dy===ty&&dm>tm)||(dy===ty&&dm===tm&&dd>td);
-
-  if(dojAfterThreshold){
-    const cutoffDisplay=String(cd).padStart(2,'0')+'/'+String(cm).padStart(2,'0')+'/'+cy;
-    w.innerHTML='<div class="alert a-warn"><span class="a-ico">&#9888;</span><div>You have not completed '+minYrs+' years in the Zone as of '+cutoffDisplay+'. You may not meet the cut-off criteria for General Repatriation unless you qualify under special grounds such as <strong>Spouse, Medical, Compassionate grounds, Death of Spouse within one year, or Retirement within one year</strong>. You may still submit.</div></div>';
+  var dojEl=document.getElementById('f_doj');
+  var w=document.getElementById('dojWarn');
+  if(!dojEl||!w){ onPrevDojChange(); return; }
+  var val=dojEl.value;
+  if(!val){ w.classList.add('hidden'); w.innerHTML=''; onPrevDojChange(); return; }
+  var s=getSettings();
+  var minYrs=parseInt(s.minYears)||3;
+  var cutoffStr=s.cutoffDate||'2026-06-30';
+  var cy=parseInt(cutoffStr.split('-')[0]), cm=parseInt(cutoffStr.split('-')[1]), cd=parseInt(cutoffStr.split('-')[2]);
+  var dy=parseInt(val.split('-')[0]), dm=parseInt(val.split('-')[1]), dd=parseInt(val.split('-')[2]);
+  var ty=cy-minYrs, tm=cm, td=cd;
+  var after=(dy>ty)||(dy===ty&&dm>tm)||(dy===ty&&dm===tm&&dd>td);
+  if(after){
+    var disp=String(cd).padStart(2,'0')+'/'+String(cm).padStart(2,'0')+'/'+cy;
+    w.innerHTML='<div class="alert a-warn"><span class="a-ico">&#9888;</span><div>You have not completed '+minYrs+' years in the Zone as of '+disp+'. You may not meet the cut-off criteria for General Repatriation unless you qualify under special grounds such as <strong>Spouse, Medical, Compassionate grounds, Death of Spouse within one year, or Retirement within one year</strong>. You may still submit.</div></div>';
     w.classList.remove('hidden');
-  }else{
-    w.innerHTML='';w.classList.add('hidden');
-  }
+  } else { w.innerHTML=''; w.classList.add('hidden'); }
   onPrevDojChange();
 }
 
-/* FILE */
-let selFile=null;
+/* ============================================================
+   FILE UPLOAD
+============================================================ */
 function handleFile(input){
-  const file=input.files[0];if(!file)return;
-  if(file.size>10*1024*1024){alert('File too large. Max 10 MB.');input.value='';return;}
+  var file=input.files[0]; if(!file) return;
+  if(file.size>10*1024*1024){ alert('File too large. Maximum 10 MB allowed.'); input.value=''; return; }
   selFile=file;
-  const p=document.getElementById('fprev');
-  p.innerHTML='<div class="fprev-box"><span class="fprev-name">&#128206; '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)</span><button class="fprev-rm" onclick="removeFile()">&#x2715;</button></div>';
-  p.classList.remove('hidden');
+  var p=document.getElementById('fprev');
+  if(p){ p.innerHTML='<div class="fprev-box"><span class="fprev-name">&#128206; '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)</span><button class="fprev-rm" onclick="removeFile()">&#x2715;</button></div>'; p.classList.remove('hidden'); }
 }
-function removeFile(){selFile=null;document.getElementById('f_docFile').value='';document.getElementById('fprev').classList.add('hidden');}
-const uz=document.getElementById('uploadZone');
-uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
-uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
-uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('drag');const f=e.dataTransfer.files[0];if(f){const inp=document.getElementById('f_docFile');try{const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;}catch(ex){}handleFile(inp);}});
+function removeFile(){ selFile=null; var inp=document.getElementById('f_docFile'); if(inp) inp.value=''; var p=document.getElementById('fprev'); if(p) p.classList.add('hidden'); }
+
+var _uz=document.getElementById('uploadZone');
+if(_uz){
+  _uz.addEventListener('dragover',function(e){e.preventDefault();_uz.classList.add('drag');});
+  _uz.addEventListener('dragleave',function(){_uz.classList.remove('drag');});
+  _uz.addEventListener('drop',function(e){e.preventDefault();_uz.classList.remove('drag');var f=e.dataTransfer.files[0];if(f){var inp=document.getElementById('f_docFile');try{var dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;}catch(ex){}handleFile(inp);}});
+}
 
 /* ============================================================
    VALIDATION
 ============================================================ */
-function clearErrors(){document.querySelectorAll('.ferr-msg').forEach(e=>e.remove());document.querySelectorAll('.ferr-input').forEach(e=>e.classList.remove('ferr-input'));}
-function setErr(id,msg){const el=document.getElementById(id);if(!el)return;el.classList.add('ferr-input');if(!el.parentNode.querySelector('.ferr-msg')){const d=document.createElement('div');d.className='ferr-msg';d.textContent=msg;el.parentNode.appendChild(d);}}
+function clearErrors(){ document.querySelectorAll('.ferr-msg').forEach(function(e){e.remove();}); document.querySelectorAll('.ferr-input').forEach(function(e){e.classList.remove('ferr-input');}); }
+function setErr(id,msg){ var el=document.getElementById(id); if(!el) return; el.classList.add('ferr-input'); if(!el.parentNode.querySelector('.ferr-msg')){ var d=document.createElement('div'); d.className='ferr-msg'; d.textContent=msg; el.parentNode.appendChild(d); } }
 
 function validateForm(){
-  clearErrors();let valid=true;const errs=[];
-  const req=(id,lbl)=>{const el=document.getElementById(id);if(!el||!el.value.trim()){setErr(id,lbl+' is required.');errs.push(lbl);valid=false;}};
-  req('f_name','Name');req('f_cat','Category');req('f_scale','Scale');
-  req('f_promoTrack','Promotion Track');req('f_promoDate','Date of Promotion/Recruitment');
-  req('f_assoc','Association');req('f_pZone','Present Zone');req('f_pRegion','Present Region');
-  req('f_branch','Present Branch/Office');req('f_doj','Date of Joining Zone');
-
-  // Previous zone validation
-  const prevOn=document.getElementById('f_prevZoneToggle').checked;
-  if(prevOn){
-    req('f_prevZone','Previous Zone');req('f_prevRegion','Previous Zone Region');req('f_prevDoj','Date of Joining Previous Zone');
-    const prevDoj=document.getElementById('f_prevDoj').value;
-    const presentDoj=document.getElementById('f_doj').value;
-    if(prevDoj&&presentDoj&&new Date(prevDoj)>=new Date(presentDoj)){
-      setErr('f_prevDoj','Previous zone joining date must be before present zone joining date.');valid=false;
-    }
-  }
-
-  req('f_tCat','Category of Transfer');req('f_rZone','Requested Zone');
-  const cat=document.getElementById('f_tCat').value;
-  const rz=document.getElementById('f_rZone').value;
-  if(rz){
-    const r1=document.getElementById('f_rr1');
-    if(r1&&!r1.value){r1.classList.add('ferr-input');errs.push('Requested Region');valid=false;}
+  clearErrors(); var valid=true; var errs=[];
+  function req(id,lbl){ var el=document.getElementById(id); if(!el||!el.value.trim()){ setErr(id,lbl+' is required.'); errs.push(lbl); valid=false; } }
+  req('f_name','Name');
+  var empid=document.getElementById('f_empid').value.trim();
+  if(!empid){ setErr('f_empid','Employee ID required.'); errs.push('Employee ID'); valid=false; }
+  else if(!/^\d{6}$/.test(empid)){ setErr('f_empid','Employee ID must be 6 digits.'); valid=false; }
+  var wa=document.getElementById('f_wa').value.trim();
+  if(!wa){ setErr('f_wa','WhatsApp required.'); valid=false; }
+  else if(!/^\d{10}$/.test(wa)){ setErr('f_wa','Enter 10-digit mobile number.'); valid=false; }
+  req('f_cat','Category'); req('f_scale','Scale'); req('f_promoTrack','Promotion Track'); req('f_promoDate','Date of Promotion'); req('f_assoc','Association');
+  req('f_pZone','Present Zone'); req('f_pRegion','Present Region'); req('f_branch','Present Branch'); req('f_doj','Date of Joining Zone');
+  var prevOn=document.getElementById('f_prevZoneToggle').checked;
+  if(prevOn){ req('f_prevZone','Previous Zone'); req('f_prevRegion','Previous Region'); req('f_prevDoj','Date of Joining Previous Zone');
+    var prevDoj=document.getElementById('f_prevDoj').value; var presentDoj=document.getElementById('f_doj').value;
+    if(prevDoj&&presentDoj&&new Date(prevDoj)>=new Date(presentDoj)){ setErr('f_prevDoj','Must be before present zone joining date.'); valid=false; } }
+  req('f_tCat','Transfer Category'); req('f_rZone','Requested Zone');
+  var cat=document.getElementById('f_tCat').value; var rz=document.getElementById('f_rZone').value;
+  if(rz){ var r1=document.getElementById('f_rr1'); if(r1&&!r1.value){ r1.classList.add('ferr-input'); errs.push('Requested Region'); valid=false; }
     if(cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone'){
-      const r2=document.getElementById('f_rr2'),r3=document.getElementById('f_rr3');
-      if(r2&&!r2.value){r2.classList.add('ferr-input');valid=false;}
-      if(r3&&!r3.value){r3.classList.add('ferr-input');valid=false;}
-    }
-  }
-  req('f_state','Domicile State');req('f_dist','Domicile District');
-  const pin=document.getElementById('f_pin').value.trim();
-  if(!pin){setErr('f_pin','Pincode is required.');valid=false;}
-  else if(!/^\d{6}$/.test(pin)){setErr('f_pin','Enter a valid 6-digit pincode.');valid=false;}
-  const fe=document.getElementById('formErrors');
-  if(!valid){fe.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div><strong>Please fill all required fields:</strong> '+errs.join(', ')+'.</div></div>';fe.classList.remove('hidden');}
-  else fe.classList.add('hidden');
+      var r2=document.getElementById('f_rr2'), r3=document.getElementById('f_rr3');
+      if(r2&&!r2.value){ r2.classList.add('ferr-input'); valid=false; } if(r3&&!r3.value){ r3.classList.add('ferr-input'); valid=false; } } }
+  req('f_state','Domicile State'); req('f_dist','Domicile District');
+  var pin=document.getElementById('f_pin').value.trim();
+  if(!pin){ setErr('f_pin','Pincode required.'); valid=false; } else if(!/^\d{6}$/.test(pin)){ setErr('f_pin','Enter 6-digit pincode.'); valid=false; }
+  var fe=document.getElementById('formErrors');
+  if(!valid&&fe){ fe.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div><strong>Please fill required fields:</strong> '+errs.join(', ')+'.</div></div>'; fe.classList.remove('hidden'); }
+  else if(fe) fe.classList.add('hidden');
   return valid;
 }
 
@@ -1202,497 +1117,238 @@ function validateForm(){
    ADVISORY + SUBMIT
 ============================================================ */
 function handleSubmitClick(){
-  if(!validateForm()){document.getElementById('formErrors').scrollIntoView({behavior:'smooth',block:'center'});return;}
-  const sb=document.getElementById('submitBtn');
-  if(sb){sb.disabled=true;sb.innerHTML='<span class="spin"></span>&nbsp; Processing...';}
-  // slight delay so user sees feedback before advisory modal
-  setTimeout(()=>{
-    if(sb){sb.disabled=false;sb.innerHTML=isEditMode?'&#9998; Update My Details':'&#10003; Submit Transfer Request';}
-    document.getElementById('advisoryOverlay').classList.remove('hidden');
-  },400);
+  if(!validateForm()){ document.getElementById('formErrors').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  var sb=document.getElementById('submitBtn'); if(sb){ sb.disabled=true; sb.textContent='Validating...'; setTimeout(function(){ sb.disabled=false; sb.innerHTML=isEditMode?'&#9998; Update My Details':'&#10003; Submit Transfer Request'; document.getElementById('advisoryOverlay').classList.remove('hidden'); },300); }
+  else document.getElementById('advisoryOverlay').classList.remove('hidden');
 }
-function closeAdvisory(){document.getElementById('advisoryOverlay').classList.add('hidden');}
+function closeAdvisory(){ document.getElementById('advisoryOverlay').classList.add('hidden'); }
 
 async function doFinalSubmit(){
-  const submitBtn=document.getElementById('finalSubmitBtn');
-  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Starting...';}
+  var submitBtn=document.getElementById('finalSubmitBtn');
+  if(submitBtn){ submitBtn.disabled=true; submitBtn.textContent='Saving...'; }
   document.getElementById('advisoryOverlay').classList.add('hidden');
 
-  const cat=document.getElementById('f_tCat').value;
-  const multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
-  const gv=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
-  const gr=n=>{const el=document.getElementById('f_rr'+n);return el?el.value:'';};
-  const prevOn=document.getElementById('f_prevZoneToggle').checked;
+  var cat=document.getElementById('f_tCat').value;
+  var multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
+  var gv=function(id){ var el=document.getElementById(id); return el?el.value.trim():''; };
+  var gr=function(n){ var el=document.getElementById('f_rr'+n); return el?el.value:''; };
+  var prevOn=document.getElementById('f_prevZoneToggle').checked;
 
-  const sub={
-    empId:currentOfficer.empId,
-    dobStored:currentOfficer.dob,
-    dobHash:currentOfficer.dob,
-    timestamp:new Date().toISOString(),
-    synced:false,
-    name:gv('f_name'),whatsapp:currentOfficer.wa,
-    officerCategory:gv('f_cat'),officerScale:gv('f_scale'),
+  var sub={
+    empId:currentOfficer.empId, dobStored:currentOfficer.dob, dobHash:currentOfficer.dob,
+    timestamp:new Date().toISOString(), synced:false,
+    name:gv('f_name'), whatsapp:currentOfficer.wa,
+    officerCategory:gv('f_cat'), officerScale:gv('f_scale'),
     promoTrack:gv('f_promoTrack'),
     promoDate:gv('f_promoDate')?new Date(gv('f_promoDate')).toLocaleDateString('en-IN'):'',
     promoDateRaw:gv('f_promoDate'),
     association:gv('f_assoc'),
     assocWarning:document.getElementById('assocWarn').innerHTML.includes('alert')?'Yes':'No',
-    presentZone:gv('f_pZone'),presentRegion:gv('f_pRegion'),
-    presentBranch:gv('f_branch'),dateJoiningZone:gv('f_doj'),
+    presentZone:gv('f_pZone'), presentRegion:gv('f_pRegion'),
+    presentBranch:gv('f_branch'), dateJoiningZone:gv('f_doj'),
     dateWarning:document.getElementById('dojWarn').innerHTML.includes('alert')?'Yes':'No',
-    prevZone:prevOn?gv('f_prevZone'):'',prevRegion:prevOn?gv('f_prevRegion'):'',
+    prevZone:prevOn?gv('f_prevZone'):'', prevRegion:prevOn?gv('f_prevRegion'):'',
     prevDoj:prevOn?gv('f_prevDoj'):'',
     prevDojFormatted:prevOn&&gv('f_prevDoj')?new Date(gv('f_prevDoj')).toLocaleDateString('en-IN'):'',
-    transferCategory:cat,transferDetails:gv('f_details'),
-    supportingDoc:selFile?selFile.name:'None',supportingDocLink:'',
+    transferCategory:cat, transferDetails:gv('f_details'),
+    supportingDoc:selFile?selFile.name:'None', supportingDocLink:'',
     requestedZone:gv('f_rZone'),
-    reqRegion1:gr(1),reqRegion2:multi?gr(2):'',reqRegion3:multi?gr(3):'',
-    domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
+    reqRegion1:gr(1), reqRegion2:multi?gr(2):'', reqRegion3:multi?gr(3):'',
+    domicileState:gv('f_state'), domicileDistrict:gv('f_dist'), pincode:gv('f_pin')
   };
 
-  // Show upload overlay
-  const overlay=document.getElementById('uploadProgressOverlay');
-  const progBar=document.getElementById('uploadProgressBar');
-  const progPct=document.getElementById('uploadProgressPct');
-  const statusTitle=document.getElementById('uploadStatusTitle');
-  const statusMsg=document.getElementById('uploadStatusMsg');
-  const stepsList=document.getElementById('uploadStepsList');
-  const statusIcon=document.getElementById('uploadStatusIcon');
+  // Show progress overlay
+  var overlay=document.getElementById('uploadProgressOverlay');
+  var progBar=document.getElementById('uploadProgressBar');
+  var progPct=document.getElementById('uploadProgressPct');
+  var statusTitle=document.getElementById('uploadStatusTitle');
+  var statusMsg=document.getElementById('uploadStatusMsg');
+  var statusIcon=document.getElementById('uploadStatusIcon');
+  var stepsList=document.getElementById('uploadStepsList');
+  if(overlay) overlay.classList.remove('hidden');
+  if(stepsList) stepsList.innerHTML='';
 
   function setProgress(pct,title,msg){
-    if(progBar)progBar.style.width=pct+'%';
-    if(progPct)progPct.textContent=pct+'%';
-    if(title&&statusTitle)statusTitle.textContent=title;
-    if(msg&&statusMsg)statusMsg.textContent=msg;
+    if(progBar) progBar.style.width=pct+'%';
+    if(progPct) progPct.textContent=pct+'%';
+    if(title&&statusTitle) statusTitle.textContent=title;
+    if(msg&&statusMsg) statusMsg.textContent=msg;
   }
-  function addStep(icon,text,done){
-    if(!stepsList)return;
-    var id='step_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  function addStep(icon,text){
+    if(!stepsList) return;
     var div=document.createElement('div');
-    div.id=id;
-    div.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #f0f4fb';
-    div.innerHTML='<span style="font-size:.9rem">'+icon+'</span><span>'+text+'</span>';
+    div.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f0f4fb';
+    div.innerHTML='<span style="font-size:.9rem">'+icon+'</span><span style="font-size:.82rem">'+text+'</span>';
     stepsList.appendChild(div);
-    return id;
-  }
-  function updateStep(id,icon,text){
-    if(!id)return;
-    var el=document.getElementById(id);
-    if(el)el.innerHTML='<span style="font-size:.9rem">'+icon+'</span><span>'+text+'</span>';
+    return div;
   }
 
-  if(overlay)overlay.classList.remove('hidden');
-  if(stepsList)stepsList.innerHTML='';
-  setProgress(5,'Submitting Your Request','Saving your details...');
+  setProgress(5,'Submitting Your Request','Please wait...');
 
-  const activeGas=getGasUrl();
-  var step1=addStep('&#9203;','Saving to Google Sheets...',false);
+  var activeGas=getGasUrl();
 
-  // ── STEP 1: Save form data to sheet (no file — fast & reliable) ──
-  var dataOk=false;
-  try{
-    var dataPayload=Object.assign({},sub);
-    delete dataPayload.synced;
-    dataPayload.dobHashForStorage=sub.dobStored||'';
-    dataPayload._type='dataOnly';
+  // ── STEP 1: Save form data to sheet (no file — fast) ──
+  setProgress(10,'Saving to Google Sheets','Sending your form data...');
+  var dataStep=addStep('&#9203;','Saving form data to Google Sheets...');
 
-    if(activeGas){
-      setProgress(15,'Saving to Google Sheets','Sending your form data...');
-      await fetch(activeGas,{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(dataPayload)
-      });
-      // Wait for GAS to write, then verify
+  var dataPayload=Object.assign({},sub);
+  delete dataPayload.synced;
+  dataPayload.dobHashForStorage=sub.dobStored||'';
+  dataPayload._type='dataOnly';
+
+  if(activeGas){
+    try{
+      await fetch(activeGas,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(dataPayload)});
       await new Promise(function(r){setTimeout(r,2500);});
-      // Try to verify
+      // Verify written
       try{
-        var vResp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
-        if(vResp.ok){
-          var vData=await vResp.json();
-          if(vData.found)dataOk=true;
-        }
-      }catch(ve){dataOk=true;} // assume ok if GET fails
-    } else {
-      dataOk=true; // no GAS — local only
-    }
-
-    // Always save locally
-    var subs=getSubs();
-    var li=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(li>=0)subs[li]=sub; else subs.push(sub);
-    subs[li>=0?li:subs.length-1].synced=dataOk;
-    saveSubs(subs);
-
-    updateStep(step1,dataOk?'&#10003;':'&#128190;',dataOk?'Saved to Google Sheets':'Saved locally (will sync later)');
-    setProgress(40,'Form Data Saved','');
-  }catch(err){
-    updateStep(step1,'&#128190;','Saved locally (GAS unavailable)');
-    var subs=getSubs();
-    var li=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(li>=0)subs[li]=sub; else subs.push(sub);
-    saveSubs(subs);
-    setProgress(40,'Form Data Saved','');
+        var vr=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+        if(vr.ok){ var vd=await vr.json(); if(vd.found) sub.synced=true; }
+      }catch(ve){}
+      if(dataStep) dataStep.querySelector('span:last-child').textContent=sub.synced?'Saved to Google Sheets ✓':'Saved locally (will sync later)';
+    }catch(e){ if(dataStep) dataStep.querySelector('span:last-child').textContent='Saved locally (will retry)'; }
+  } else {
+    if(dataStep) dataStep.querySelector('span:last-child').textContent='Saved locally (GAS not configured)';
   }
 
-  // ── STEP 2: Upload file (shown with progress, user waits) ──────
+  // Always save locally
+  var subs=getSubs();
+  var li=subs.findIndex(function(s){ return s.empId===sub.empId; });
+  if(li>=0) subs[li]=sub; else subs.push(sub);
+  saveSubs(subs);
+  setProgress(40,'Form Data Saved','');
+
+  // ── STEP 2: Upload file if present ──
   if(selFile && selFile.size && activeGas){
-    var fileSizeMB=(selFile.size/1024/1024).toFixed(1);
-    var step2=addStep('&#9203;','Uploading document ('+fileSizeMB+' MB)...',false);
-    setProgress(45,'Uploading Document','Your document ('+fileSizeMB+' MB) is being uploaded to Google Drive. Please wait — do not close this page.');
-    statusIcon.innerHTML='&#128228;';
+    var fMB=(selFile.size/1024/1024).toFixed(1);
+    var fileStep=addStep('&#9203;','Uploading document ('+fMB+' MB)...');
+    if(statusIcon) statusIcon.innerHTML='&#128228;';
+    setProgress(45,'Uploading Document','Please wait — do not close this page.');
 
     try{
-      // Read file as base64 with progress simulation
       var b64=await new Promise(function(res,rej){
-        var reader=new FileReader();
-        reader.onload=function(ev){
-          setProgress(60,'Reading File','File read complete. Uploading to Drive...');
-          res(ev.target.result.split(',')[1]);
-        };
-        reader.onerror=function(){rej(new Error('File read error'));};
-        reader.readAsDataURL(selFile);
+        var r=new FileReader();
+        r.onload=function(ev){ res(ev.target.result.split(',')[1]); };
+        r.onerror=function(){ rej(new Error('File read error')); };
+        r.readAsDataURL(selFile);
       });
+      setProgress(65,'Uploading to Google Drive','Sending file...');
 
-      setProgress(65,'Uploading to Google Drive','Sending file to server...');
+      var pi=setInterval(function(){
+        var cur=parseInt((progBar?progBar.style.width||'65':'65'));
+        if(cur<88){ setProgress(cur+2,'Uploading to Google Drive','File uploading...'); }
+      },600);
 
       var filePayload={
-        _type:'fileOnly',
-        empId:sub.empId,
-        fileData:b64,
-        mimeType:selFile.type||'application/octet-stream',
+        _type:'fileOnly', empId:sub.empId,
+        fileData:b64, mimeType:selFile.type||'application/octet-stream',
         fileName:sub.empId+'_'+Date.now()+'_'+selFile.name,
         dobHashForStorage:sub.dobStored||''
       };
 
-      // Simulate progress during upload (no real progress events with no-cors)
-      var progInterval=setInterval(function(){
-        var cur=parseInt(progBar?progBar.style.width||'65':'65');
-        if(cur<88){
-          setProgress(cur+2,'Uploading to Google Drive','File is being saved to Drive...');
-        }
-      },800);
+      await fetch(activeGas,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(filePayload)});
+      clearInterval(pi);
+      setProgress(90,'File Sent','Retrieving document link...');
 
-      await fetch(activeGas,{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(filePayload)
-      });
-      clearInterval(progInterval);
-      setProgress(90,'File Uploaded','Retrieving document link...');
-
-      // Wait for GAS to process the file then GET the drive link
+      // Wait for GAS to finish, then GET drive link
       await new Promise(function(r){setTimeout(r,8000);});
       try{
-        var gResp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
-        if(gResp.ok){
-          var gData=await gResp.json();
-          if(gData.found&&gData.data&&gData.data.supportingDocLink){
-            sub.supportingDocLink=gData.data.supportingDocLink;
-            sub.supportingDoc=gData.data.supportingDoc||sub.supportingDoc;
-            var subs3=getSubs();
-            var j=subs3.findIndex(function(s){return s.empId===sub.empId;});
-            if(j>=0){subs3[j].supportingDocLink=sub.supportingDocLink;subs3[j].supportingDoc=sub.supportingDoc;saveSubs(subs3);}
-            updateStep(step2,'&#10003;','Document uploaded to Google Drive');
-          } else {
-            updateStep(step2,'&#128196;','Document uploaded (link pending)');
+        var gr2=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+        if(gr2.ok){
+          var gd=await gr2.json();
+          if(gd.found&&gd.data){
+            if(gd.data.supportingDocLink){ sub.supportingDocLink=gd.data.supportingDocLink; }
+            if(gd.data.supportingDoc&&gd.data.supportingDoc!=='None'){ sub.supportingDoc=gd.data.supportingDoc; }
+            // Update localStorage with drive link
+            var subs2=getSubs(); var j=subs2.findIndex(function(s){ return s.empId===sub.empId; });
+            if(j>=0){ subs2[j].supportingDocLink=sub.supportingDocLink; subs2[j].supportingDoc=sub.supportingDoc; saveSubs(subs2); }
+            if(fileStep) fileStep.querySelector('span:last-child').textContent=sub.supportingDocLink?'Document uploaded ✓':'Document uploaded (link pending)';
           }
         }
-      }catch(ge){
-        updateStep(step2,'&#128196;','Document uploaded (link retrieval failed)');
-      }
-    }catch(fileErr){
-      updateStep(step2,'&#9888;','Document upload failed: '+fileErr.message+'. Your form data was saved. Please contact UBOA(KS) to submit your document separately.');
-    }
+      }catch(ge){ if(fileStep) fileStep.querySelector('span:last-child').textContent='Document uploaded (verifying...)'; }
+    }catch(fe){ if(fileStep) fileStep.querySelector('span:last-child').textContent='Upload failed: '+fe.message; }
   }
 
-  // ── Done ────────────────────────────────────────────────────
-  setProgress(100,'All Done!','');
-  statusIcon.innerHTML='&#10003;&#65039;';
-  statusTitle.textContent='Submission Complete!';
-  statusMsg.textContent='Your Inter Zone Transfer request has been recorded successfully.';
-  addStep('&#10003;','Submission complete — thank you!',true);
+  // Done
+  setProgress(100,'Complete!','');
+  if(statusIcon) statusIcon.innerHTML='&#10003;&#65039;';
+  if(statusTitle) statusTitle.textContent='Submission Complete!';
+  if(statusMsg) statusMsg.textContent='Your Inter Zone Transfer request has been recorded.';
+  addStep('&#10003;','Submission complete — thank you!');
 
-  if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='I Have Noted \u2014 Submit Now';}
-
-  // Brief pause so user sees 100% before moving on
+  if(submitBtn){ submitBtn.disabled=false; submitBtn.textContent='I Have Noted — Submit Now'; }
   await new Promise(function(r){setTimeout(r,1500);});
-  if(overlay)overlay.classList.add('hidden');
-
+  if(overlay) overlay.classList.add('hidden');
   document.getElementById('succName').textContent=sub.name;
   showPage('successPage');
 }
 
-// Sync a single entry to GAS. Can be called from background or manually.
-async function syncOneEntry(sub, fileObj){
-  const activeGas=getGasUrl();
-  if(!activeGas) return;
-
-  // ── STEP 1: POST form data only (no file) — small, fast, reliable ──
-  try{
-    var dataPayload=Object.assign({},sub);
-    delete dataPayload.synced;
-    delete dataPayload.fileData; // never send file in data POST
-    dataPayload.dobHashForStorage=sub.dobStored||sub.dobHash||'';
-    dataPayload._type='dataOnly'; // tell GAS this is data only, no file
-
-    await fetch(activeGas,{
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(dataPayload)
+/* ============================================================
+   POPULATE FORM (for edit)
+============================================================ */
+function populateForm(s){
+  resetFormFields();
+  var sv=function(id,val){ var el=document.getElementById(id); if(el) el.value=val||''; };
+  sv('f_empid',s.empId); sv('f_wa',s.whatsapp); sv('f_name',s.name);
+  sv('f_cat',s.officerCategory); sv('f_scale',s.officerScale);
+  sv('f_promoTrack',s.promoTrack||''); onPromoTrackChange(); sv('f_promoDate',s.promoDateRaw||'');
+  sv('f_assoc',s.association); onAssocChange();
+  sv('f_pZone',s.presentZone); onPresentZoneChange();
+  sv('f_branch',s.presentBranch); sv('f_doj',s.dateJoiningZone);
+  if(s.prevZone){
+    var tog=document.getElementById('f_prevZoneToggle'); if(tog){ tog.checked=true; onPrevZoneToggle(); }
+    sv('f_prevZone',s.prevZone); onPrevZoneChange(); sv('f_prevDoj',s.prevDoj||'');
+  }
+  sv('f_tCat',s.transferCategory); onTransferCatChange();
+  sv('f_rZone',s.requestedZone); onReqZoneChange();
+  sv('f_details',s.transferDetails||'');
+  var dc=document.getElementById('dcount'); if(dc) dc.textContent=(s.transferDetails||'').length;
+  sv('f_state',s.domicileState); onStateChange(); sv('f_pin',s.pincode);
+  requestAnimationFrame(function(){
+    sv('f_pRegion',s.presentRegion);
+    if(s.prevZone) sv('f_prevRegion',s.prevRegion||'');
+    sv('f_dist',s.domicileDistrict);
+    requestAnimationFrame(function(){
+      sv('f_rZone',s.requestedZone); onReqZoneChange();
+      requestAnimationFrame(function(){
+        sv('f_rr1',s.reqRegion1||''); sv('f_rr2',s.reqRegion2||''); sv('f_rr3',s.reqRegion3||'');
+        onDojChange(); updateProgress();
+      });
     });
-    console.log('Data POST sent for', sub.empId);
-
-    // Mark synced after data POST (file upload is bonus)
-    var subs=getSubs();
-    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(i>=0){subs[i].synced=true; saveSubs(subs);}
-
-  }catch(err){
-    console.warn('Data POST failed:', err.message);
-    var subs=getSubs();
-    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(i>=0){subs[i].synced=false; saveSubs(subs);}
-    return; // Don't attempt file upload if data POST failed
-  }
-
-  // ── STEP 2: Upload file separately (only if file provided) ─────────
-  if(fileObj && fileObj.size){
-    try{
-      var b64=await new Promise(function(res,rej){
-        var r=new FileReader();
-        r.onload=function(ev){res(ev.target.result.split(',')[1]);};
-        r.onerror=function(){rej(new Error('read failed'));};
-        r.readAsDataURL(fileObj);
-      });
-
-      var filePayload={
-        _type:'fileOnly',
-        empId:sub.empId,
-        fileData:b64,
-        mimeType:fileObj.type||'application/octet-stream',
-        fileName:sub.empId+'_'+Date.now()+'_'+fileObj.name,
-        dobHashForStorage:sub.dobStored||sub.dobHash||''
-      };
-
-      await fetch(activeGas,{
-        method:'POST', mode:'no-cors',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(filePayload)
-      });
-      console.log('File POST sent for', sub.empId);
-
-      // Wait for GAS to process, then GET drive link
-      await new Promise(function(r){setTimeout(r,6000);});
-      try{
-        var gResp=await fetch(
-          activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),
-          {method:'GET',cache:'no-cache'}
-        );
-        if(gResp.ok){
-          var gData=await gResp.json();
-          if(gData.found && gData.data && gData.data.supportingDocLink){
-            var subs2=getSubs();
-            var j=subs2.findIndex(function(s){return s.empId===sub.empId;});
-            if(j>=0){
-              subs2[j].supportingDocLink=gData.data.supportingDocLink;
-              subs2[j].supportingDoc=gData.data.supportingDoc||subs2[j].supportingDoc;
-              saveSubs(subs2);
-            }
-          }
-        }
-      }catch(getErr){
-        console.warn('Drive link GET failed (non-critical):', getErr.message);
-      }
-    }catch(fileErr){
-      console.warn('File upload failed (data already saved):', fileErr.message);
-    }
-  }
-
-  // Update table if admin is viewing
-  if(document.getElementById('adminDashboard') &&
-     !document.getElementById('adminDashboard').classList.contains('hidden')){
-    renderTable();
-  }
-}
-
-// XHR POST — follows GAS redirects correctly, returns parsed JSON response
-/* xhrPost removed - using fetch */
-
-// Sync all unsynced entries
-async function syncAllPending(){
-  const btn=document.getElementById('syncAllBtn');
-  const banner=document.getElementById('gasStatusBanner');
-  const subs=getSubs();
-  const pending=subs.filter(function(s){return !s.synced;});
-  if(!pending.length){
-    if(banner){banner.style.background='var(--succbg)';banner.style.border='1px solid var(--succb)';banner.style.color='var(--green)';banner.innerHTML='&#10003; All entries are already synced to Google Sheets.';banner.classList.remove('hidden');}
-    return;
-  }
-  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span>&nbsp; Syncing '+pending.length+' entries...';}
-  if(banner){banner.style.background='var(--infobg)';banner.style.border='1px solid var(--infob)';banner.style.color='var(--navy)';banner.innerHTML='Syncing '+pending.length+' pending entries to Google Sheets...';banner.classList.remove('hidden');}
-  var ok=0, fail=0;
-  for(var i=0;i<pending.length;i++){
-    try{
-      await syncOneEntry(pending[i], null);
-      ok++;
-    }catch(e){fail++;}
-    if(btn)btn.innerHTML='<span class="spin"></span>&nbsp; Synced '+(ok+fail)+'/'+pending.length+'...';
-  }
-  if(btn){btn.disabled=false;btn.innerHTML='&#9729; Sync All to Sheets';}
-  var msg=ok+' synced'+(fail?' · '+fail+' failed':'');
-  if(banner){
-    if(fail>0){banner.style.background='var(--warnbg)';banner.style.border='1px solid var(--warnb)';banner.style.color='#7a5000';}
-    else{banner.style.background='var(--succbg)';banner.style.border='1px solid var(--succb)';banner.style.color='var(--green)';}
-    banner.innerHTML=msg;
-  }
-  renderTable(); renderStats();
-}
-
-// Test GAS connection
-async function testGasConnection(){
-  const banner=document.getElementById('gasStatusBanner');
-  const diagDiv=document.getElementById('gasDiagDetails');
-  const activeGas=getGasUrl();
-
-  function showBanner(bg, bc, color, msg){
-    if(banner){
-      banner.style.cssText='background:'+bg+';border:1px solid '+bc+';color:'+color+
-        ';padding:10px 14px;border-radius:6px;font-size:.83rem;margin-bottom:10px';
-      banner.innerHTML=msg;
-      banner.classList.remove('hidden');
-    }
-  }
-
-  if(!activeGas){
-    showBanner('var(--warnbg)','var(--warnb)','#7a5000',
-      '&#9888; <strong>GAS URL not configured.</strong> Open the HTML file in a text editor '+
-      'and paste your Apps Script deployment URL into <code>const GAS_URL = \'...\';</code>'+
-      ' at the top of the &lt;script&gt; section.');
-    return;
-  }
-
-  showBanner('var(--infobg)','var(--infob)','var(--navy)',
-    '<span class="spin" style="border-color:rgba(0,35,102,.3);border-top-color:var(--navy);width:12px;height:12px;border-width:2px;display:inline-block"></span>'+
-    ' Testing connection to Google Apps Script...');
-
-  try{
-    var resp=await fetch(activeGas+'?action=ping&t='+Date.now(),
-      {method:'GET', cache:'no-cache'});
-
-    if(resp.ok){
-      var data=await resp.json();
-      var unsyncedCount=getSubs().filter(function(s){return !s.synced;}).length;
-      var syncMsg=unsyncedCount>0
-        ? ' <strong>'+unsyncedCount+' entries pending sync.</strong> Click "Sync All to Sheets" above.'
-        : ' All entries are synced.';
-      showBanner('var(--succbg)','var(--succb)','var(--green)',
-        '&#10003; <strong>Connected to Google Sheets.</strong>'+syncMsg);
-    } else {
-      showBanner('var(--errbg)','var(--errb)','var(--red)',
-        '&#10060; <strong>HTTP '+resp.status+'</strong> — See troubleshooting below.');
-      showDiag(activeGas, 'HTTP '+resp.status);
-    }
-  }catch(err){
-    var isCors=err.message.indexOf('CORS')>=0||err.message.indexOf('fetch')>=0||err.message.indexOf('Failed')>=0;
-    showBanner('var(--errbg)','var(--errb)','var(--red)',
-      '&#10060; <strong>Connection failed: '+err.message+'</strong> — See troubleshooting below.');
-    showDiag(activeGas, err.message);
-  }
-}
-
-function showDiag(url, errMsg){
-  var d=document.getElementById('gasDiagDetails');
-  if(!d)return;
-  d.style.cssText='background:#1a1a2e;color:#e0e0e0;padding:14px;border-radius:6px;font-size:.8rem;line-height:1.8;margin-bottom:12px';
-  d.innerHTML='<strong style="color:#F0B429">&#128270; Troubleshooting Steps:</strong><br><br>'+
-    '<strong style="color:#90EE90">1. Check your GAS_URL in the HTML:</strong><br>'+
-    '&nbsp;&nbsp;Current value: <span style="color:#87CEEB;word-break:break-all">'+url+'</span><br><br>'+
-    '<strong style="color:#90EE90">2. Open this URL in a NEW browser tab:</strong><br>'+
-    '&nbsp;&nbsp;<a href="'+url+'" target="_blank" style="color:#87CEEB">Click here to open GAS URL</a><br>'+
-    '&nbsp;&nbsp;You should see: <span style="color:#90EE90">{"status":"UBOA KS Transfer API Active"}</span><br>'+
-    '&nbsp;&nbsp;If you see a Google login page → redeploy with "Who has access: Anyone"<br>'+
-    '&nbsp;&nbsp;If you see an error → the script has a bug (check SPREADSHEET_ID)<br><br>'+
-    '<strong style="color:#90EE90">3. In Apps Script editor:</strong><br>'+
-    '&nbsp;&nbsp;a. Make sure SPREADSHEET_ID is replaced with your actual Sheet ID<br>'+
-    '&nbsp;&nbsp;b. Run the testWrite function to verify sheet access<br>'+
-    '&nbsp;&nbsp;c. Deploy → Manage → ✏️ → New version → Deploy<br>'+
-    '&nbsp;&nbsp;d. Execute as: Me &nbsp;|&nbsp; Who has access: Anyone<br><br>'+
-    '<strong style="color:#FFA07A">Error received: '+errMsg+'</strong>';
-  d.classList.remove('hidden');
+  });
 }
 
 /* ============================================================
-   RESET
+   RESET FORM
 ============================================================ */
 function resetFormFields(){
-  // Reset form values
-  const form=document.getElementById('transferForm');
-  if(form) form.reset();
-
-  // Only hide+clear LEAF status/warning divs (never container sections that hold inputs)
-  ['assocWarn','dojWarn','formErrors','prevDojErr'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.innerHTML='';el.classList.add('hidden');}
+  var tf=document.getElementById('transferForm'); if(tf) tf.reset();
+  ['assocWarn','dojWarn','specialSec','reqRegSec','formErrors','fprev','prevZoneSec','prevDojErr'].forEach(function(id){
+    var el=document.getElementById(id); if(el){ el.innerHTML=''; el.classList.add('hidden'); }
   });
-
-  // Hide FILE PREVIEW leaf div
-  const fprev=document.getElementById('fprev');
-  if(fprev){fprev.innerHTML='';fprev.classList.add('hidden');}
-
-  // Hide CONTAINER sections (DO NOT clear innerHTML - that would destroy child elements)
-  ['specialSec','reqRegSec','prevZoneSec'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.classList.add('hidden');
-  });
-
-  // Clear dynamic region preferences container (safe - these are dynamically generated)
-  const rpc=document.getElementById('rprefsContainer');
-  if(rpc) rpc.innerHTML='';
-
-  // Reset progress
-  const pb=document.getElementById('progressBar');
-  const pp=document.getElementById('progPct');
-  if(pb) pb.style.width='0%';
-  if(pp) pp.textContent='0%';
-
-  // Reset character counter
-  const dc=document.getElementById('dcount');
-  if(dc) dc.textContent='0';
-
+  var rpc=document.getElementById('rprefsContainer'); if(rpc) rpc.innerHTML='';
+  var pb=document.getElementById('progressBar'); if(pb) pb.style.width='0%';
+  var pp=document.getElementById('progPct'); if(pp) pp.textContent='0%';
+  var dc=document.getElementById('dcount'); if(dc) dc.textContent='0';
   selFile=null;
-
-  // Reset dependent dropdowns to initial state
-  const pr=document.getElementById('f_pRegion');
-  if(pr){pr.innerHTML='<option value="">-- Select Zone first --</option>';pr.disabled=true;}
-
-  const pvr=document.getElementById('f_prevRegion');
-  if(pvr){pvr.innerHTML='<option value="">-- Select Zone first --</option>';pvr.disabled=true;}
-
-  const rz=document.getElementById('f_rZone');
-  if(rz){rz.innerHTML='<option value="">-- Select Transfer Category first --</option>';rz.disabled=true;}
-
-  const dd=document.getElementById('f_dist');
-  if(dd){dd.innerHTML='<option value="">-- Select State first --</option>';dd.disabled=true;}
-
-  // Reset toggles and labels
-  const tog=document.getElementById('f_prevZoneToggle');
-  if(tog) tog.checked=false;
-
-  const promoLbl=document.getElementById('f_promoDateLabel');
-  if(promoLbl) promoLbl.innerHTML='Date of Promotion / Recruitment <span class="req">*</span>';
-
+  var pr=document.getElementById('f_pRegion'); if(pr){ pr.innerHTML='<option value="">-- Select Zone first --</option>'; pr.disabled=true; }
+  var pvr=document.getElementById('f_prevRegion'); if(pvr){ pvr.innerHTML='<option value="">-- Select Zone first --</option>'; pvr.disabled=true; }
+  var rz=document.getElementById('f_rZone'); if(rz){ rz.innerHTML='<option value="">-- Select Transfer Category first --</option>'; rz.disabled=true; }
+  var dd=document.getElementById('f_dist'); if(dd){ dd.innerHTML='<option value="">-- Select State first --</option>'; dd.disabled=true; }
+  var tog=document.getElementById('f_prevZoneToggle'); if(tog) tog.checked=false;
+  var pdl=document.getElementById('f_promoDateLabel'); if(pdl) pdl.innerHTML='Date of Promotion / Recruitment <span class="req">*</span>';
   clearErrors();
 }
 
-/* PROGRESS */
+/* ============================================================
+   PROGRESS BAR
+============================================================ */
 function updateProgress(){
-  const ids=['f_name','f_cat','f_scale','f_promoTrack','f_promoDate','f_assoc','f_pZone','f_pRegion','f_branch','f_doj','f_tCat','f_rZone','f_state','f_dist','f_pin'];
-  const filled=ids.filter(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim();}).length;
-  const pct=Math.round(filled/ids.length*100);
-  const pb=document.getElementById('progressBar');const pp=document.getElementById('progPct');
-  if(pb) pb.style.width=pct+'%';
-  if(pp) pp.textContent=pct+'%';
+  var ids=['f_name','f_cat','f_scale','f_promoTrack','f_promoDate','f_assoc','f_pZone','f_pRegion','f_branch','f_doj','f_tCat','f_rZone','f_state','f_dist','f_pin'];
+  var filled=ids.filter(function(id){ var el=document.getElementById(id); return el&&el.value.trim(); }).length;
+  var pct=Math.round(filled/ids.length*100);
+  var pb=document.getElementById('progressBar'); if(pb) pb.style.width=pct+'%';
+  var pp=document.getElementById('progPct'); if(pp) pp.textContent=pct+'%';
 }
 document.getElementById('transferForm').addEventListener('input',updateProgress);
 document.getElementById('transferForm').addEventListener('change',updateProgress);
@@ -1701,113 +1357,98 @@ document.getElementById('transferForm').addEventListener('change',updateProgress
    ADMIN AUTH
 ============================================================ */
 function doLogin(){
-  const u=(document.getElementById('au')||{value:''}).value.trim();
-  const p=(document.getElementById('ap')||{value:''}).value;
-  const s=getSettings();
-  const loginBtn=document.querySelector('#adminLoginPage .btn-primary');
-  if(loginBtn){loginBtn.disabled=true;loginBtn.innerHTML='<span class="spin"></span>&nbsp; Signing in...';}
-  setTimeout(()=>{
+  var u=(document.getElementById('au')||{value:''}).value.trim();
+  var p=(document.getElementById('ap')||{value:''}).value;
+  var s=getSettings();
+  var btn=document.querySelector('#adminLoginPage .btn-primary');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spin"></span>&nbsp; Signing in...'; }
+  setTimeout(function(){
     if(u===s.username&&p===s.password){
       setAdminIn(true);
-      if(document.getElementById('ap'))document.getElementById('ap').value='';
-      const le=document.getElementById('loginErr');if(le)le.classList.add('hidden');
-      if(loginBtn){loginBtn.disabled=false;loginBtn.innerHTML='&#128274; Sign In';}
+      var ap=document.getElementById('ap'); if(ap) ap.value='';
+      var le=document.getElementById('loginErr'); if(le) le.classList.add('hidden');
+      if(btn){ btn.disabled=false; btn.innerHTML='&#128274; Sign In'; }
       showDashboard();
     } else {
-      const le=document.getElementById('loginErr');
-      if(le){le.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Invalid User ID or Password.</div></div>';le.classList.remove('hidden');}
-      if(loginBtn){loginBtn.disabled=false;loginBtn.innerHTML='&#128274; Sign In';}
+      var le=document.getElementById('loginErr');
+      if(le){ le.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Invalid User ID or Password.</div></div>'; le.classList.remove('hidden'); }
+      if(btn){ btn.disabled=false; btn.innerHTML='&#128274; Sign In'; }
     }
   },300);
 }
-function doLogout(){setAdminIn(false);showPage('adminLoginPage');}
+function doLogout(){ setAdminIn(false); showPage('adminLoginPage'); }
 
 /* ============================================================
    ADMIN DASHBOARD
 ============================================================ */
-function clearFilters(){
-  const ids=['searchBox','filterPresentZone','filterReqZone','filterPrevZone'];
-  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  renderTable();
-}
-function switchTab(t){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['entries','settings'][i]===t));
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  if(t==='entries')renderTable();if(t==='settings')loadSettings();
-}
 function refreshDash(){
   renderStats();
   renderTable();
   loadSettings();
   testGasConnection();
-  loadAllEntriesFromGas(); // load all entries from sheet on every admin login
+  loadAllEntriesFromGas();
 }
 
-// Load all entries from GAS and merge into localStorage
 async function loadAllEntriesFromGas(){
-  const activeGas=getGasUrl();
-  if(!activeGas)return;
-  const banner=document.getElementById('gasStatusBanner');
-
+  var activeGas=getGasUrl();
+  if(!activeGas) return;
+  var banner=document.getElementById('gasStatusBanner');
   try{
-    // Request all entries (action=getAll)
     var resp=await fetch(activeGas+'?action=getAll&t='+Date.now(),{method:'GET',cache:'no-cache'});
-    if(!resp.ok)return;
+    if(!resp.ok) return;
     var result=await resp.json();
-    if(!result.data || !Array.isArray(result.data) || !result.data.length)return;
-
-    // Merge: GAS data takes priority over local for existing empIds
-    // Local entries not in GAS (unsynced) are kept
-    var localSubs=getSubs();
-    var merged=[];
-    var gasEmpIds=result.data.map(function(s){return s.empId;});
-
-    // Add all GAS entries (they are authoritative)
-    merged=result.data.slice();
-
-    // Add local entries NOT in GAS (pending sync)
-    localSubs.forEach(function(ls){
-      if(!gasEmpIds.includes(ls.empId)){
-        merged.push(ls);
-      }
-    });
-
+    if(!result.data||!Array.isArray(result.data)||!result.data.length) return;
+    var local=getSubs();
+    var gasIds=result.data.map(function(s){ return s.empId; });
+    var merged=result.data.slice(); // GAS entries are authoritative
+    local.forEach(function(ls){ if(!gasIds.includes(ls.empId)) merged.push(ls); }); // add unsynced local
     saveSubs(merged);
-    renderTable();
-    renderStats();
-
+    renderTable(); renderStats();
     if(banner){
-      banner.style.cssText='background:var(--succbg);border:1px solid var(--succb);color:var(--green);padding:10px 14px;border-radius:6px;font-size:.83rem;margin-bottom:10px';
-      banner.innerHTML='&#10003; <strong>Synced '+result.data.length+' entries from Google Sheets.</strong>';
+      banner.style.cssText='background:var(--succbg);border:1px solid var(--succb);color:var(--green);padding:8px 14px;border-radius:6px;font-size:.82rem;margin-bottom:10px';
+      banner.innerHTML='&#10003; Synced '+result.data.length+' entries from Google Sheets.';
       banner.classList.remove('hidden');
-      setTimeout(function(){banner.classList.add('hidden');}, 4000);
+      setTimeout(function(){ banner.classList.add('hidden'); },4000);
     }
-  }catch(err){
-    console.warn('loadAllEntriesFromGas failed:', err.message);
-  }
+  }catch(err){ console.warn('loadAllEntriesFromGas:', err.message); }
+}
+
+var activeTab='entries';
+function switchTab(t){
+  activeTab=t;
+  var tabs=['entries','settings'];
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active',tabs[i]===t); });
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  var tp=document.getElementById('tab-'+t); if(tp) tp.classList.add('active');
+  if(t==='entries') renderTable();
+  if(t==='settings') loadSettings();
 }
 
 function renderStats(){
-  const subs=getSubs();
-  const repat=subs.filter(x=>x.transferCategory==='Repatriation to Parent Zone').length;
-  const zones=[...new Set(subs.map(x=>x.presentZone))].length;
-  const sg=document.getElementById('statsGrid');
-  if(sg)sg.innerHTML=`
-    <div class="stat-card"><div class="stat-num">${subs.length}</div><div class="stat-lbl">Total Submissions</div></div>
-    <div class="stat-card"><div class="stat-num">${repat}</div><div class="stat-lbl">Repatriation Requests</div></div>
-    <div class="stat-card"><div class="stat-num">${subs.length-repat}</div><div class="stat-lbl">Other Requests</div></div>
-    <div class="stat-card"><div class="stat-num">${zones}</div><div class="stat-lbl">Zones Represented</div></div>`;
-  const populateFilter=(id,vals)=>{
-    const el=document.getElementById(id);if(!el)return;
-    const cur=el.value;const first=el.options[0];
-    el.innerHTML='';el.appendChild(first.cloneNode(true));
-    [...new Set(vals)].filter(Boolean).sort().forEach(v=>el.add(new Option(v,v)));
-    if(cur)el.value=cur;
-  };
-  populateFilter('filterPresentZone', subs.map(s=>s.presentZone));
-  populateFilter('filterReqZone', subs.map(s=>s.requestedZone));
-  populateFilter('filterPrevZone', subs.filter(s=>s.prevZone).map(s=>s.prevZone));
+  var subs=getSubs();
+  var repat=subs.filter(function(x){ return x.transferCategory==='Repatriation to Parent Zone'; }).length;
+  var zones=[...new Set(subs.map(function(x){ return x.presentZone; }))].length;
+  var sg=document.getElementById('statsGrid');
+  if(sg) sg.innerHTML='<div class="stat-card"><div class="stat-num">'+subs.length+'</div><div class="stat-lbl">Total Submissions</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+repat+'</div><div class="stat-lbl">Repatriation Requests</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+(subs.length-repat)+'</div><div class="stat-lbl">Other Requests</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+zones+'</div><div class="stat-lbl">Zones Represented</div></div>';
+  // Update filter dropdowns
+  function populateFilter(id,vals){
+    var el=document.getElementById(id); if(!el) return;
+    var cur=el.value; var first=el.options[0].cloneNode(true);
+    el.innerHTML=''; el.appendChild(first);
+    [...new Set(vals)].filter(Boolean).sort().forEach(function(v){ el.add(new Option(v,v)); });
+    if(cur) el.value=cur;
+  }
+  populateFilter('filterPresentZone',subs.map(function(s){ return s.presentZone; }));
+  populateFilter('filterReqZone',subs.map(function(s){ return s.requestedZone; }));
+  populateFilter('filterPrevZone',subs.filter(function(s){ return s.prevZone; }).map(function(s){ return s.prevZone; }));
+}
+
+function clearFilters(){
+  ['searchBox','filterPresentZone','filterReqZone','filterPrevZone'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  renderTable();
 }
 
 function renderTable(){
@@ -1818,116 +1459,185 @@ function renderTable(){
   var fPrev=(document.getElementById('filterPrevZone')||{}).value||'';
   var filtered=subs.filter(function(s){
     var text=[s.name,s.empId,s.presentZone,s.requestedZone,s.transferCategory,s.officerCategory,s.promoTrack||''].join(' ').toLowerCase();
-    if(q&&text.indexOf(q.toLowerCase())<0)return false;
-    if(fPZ&&s.presentZone!==fPZ)return false;
-    if(fRZ&&s.requestedZone!==fRZ)return false;
-    if(fPrev&&(s.prevZone||'')!==fPrev)return false;
+    if(q&&text.indexOf(q.toLowerCase())<0) return false;
+    if(fPZ&&s.presentZone!==fPZ) return false;
+    if(fRZ&&s.requestedZone!==fRZ) return false;
+    if(fPrev&&(s.prevZone||'')!==fPrev) return false;
     return true;
   });
   var wrap=document.getElementById('tableWrap');
   var empty=document.getElementById('tableEmpty');
   var fc=document.getElementById('filterCount');
-  if(fc)fc.textContent=filtered.length!==subs.length?'Showing '+filtered.length+' of '+subs.length:'';
-  var unsyncedCount=subs.filter(function(s){return !s.synced;}).length;
-  var sb=document.getElementById('syncAllBtn');
-  if(sb) sb.innerHTML='&#9729; Sync All'+( unsyncedCount?' ('+unsyncedCount+' pending)':'');
-  if(!filtered.length){wrap.innerHTML='';empty.classList.remove('hidden');return;}
+  if(fc) fc.textContent=filtered.length!==subs.length?'Showing '+filtered.length+' of '+subs.length:'';
+  var unsynced=subs.filter(function(s){ return !s.synced; }).length;
+  var sab=document.getElementById('syncAllBtn'); if(sab) sab.innerHTML='&#9729; Sync All'+(unsynced?' ('+unsynced+' pending)':'');
+  if(!filtered.length){ wrap.innerHTML=''; empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
-  function ts(s){return new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-  function promoBadge(t){return t==='Fast Track'?'b-warn':t==='Directly Recruited'?'b-red':'b-blue';}
-  function catBadge(t){return t==='Repatriation to Parent Zone'?'b-blue':'b-warn';}
+  function ts(s){ return new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  function pb(t){ return t==='Fast Track'?'b-warn':t==='Directly Recruited'?'b-red':'b-blue'; }
+  function cb(t){ return t==='Repatriation to Parent Zone'?'b-blue':'b-warn'; }
   var rows='';
   for(var i=0;i<filtered.length;i++){
-    var s=filtered[i];
-    var eid=s.empId;
-    var syncCell=s.synced
-      ?'<span class="sync-ok">&#10003; Synced</span>'
-      :'<span class="sync-no">&#10007; Pending</span><br><button class="btn btn-outline btn-sm" style="margin-top:2px;padding:2px 8px;font-size:.72rem" onclick="reSync(\''+eid+'\')">Retry</button>';
-    var docCell=s.supportingDocLink
-      ?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;font-size:.77rem">&#128196; View</a>'
-      :(s.supportingDoc&&s.supportingDoc!=='None'
-        ?'<span style="color:var(--muted);font-size:.75rem" title="'+s.supportingDoc+'">Uploaded</span>'
-        :'<span style="color:var(--muted);font-size:.75rem">None</span>');
+    var s=filtered[i]; var eid=String(s.empId);
+    var syncCell=s.synced?'<span class="sync-ok">&#10003;</span>':'<span class="sync-no">&#10007;</span>';
+    var docCell=s.supportingDocLink?
+      '<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline;font-size:.77rem">&#128196; View</a>':
+      (s.supportingDoc&&s.supportingDoc!=='None'?'<span style="color:var(--muted);font-size:.75rem">'+s.supportingDoc.split('_').slice(2).join('_').substring(0,20)+'</span>':
+      '<span style="color:var(--muted);font-size:.75rem">None</span>');
     rows+='<tr>'+
       '<td>'+(i+1)+'</td>'+
       '<td><strong>'+s.name+'</strong></td>'+
       '<td style="font-family:monospace">'+eid+'</td>'+
       '<td style="font-weight:700;color:var(--green)">'+s.whatsapp+'</td>'+
       '<td><span class="badge b-green">'+(s.officerScale||'-')+'</span></td>'+
-      '<td><span class="badge '+promoBadge(s.promoTrack||'')+'">'+(s.promoTrack||'-')+'</span></td>'+
+      '<td><span class="badge '+pb(s.promoTrack||'')+'">'+(s.promoTrack||'-')+'</span></td>'+
       '<td>'+s.presentZone+'</td>'+
-      '<td style="font-size:.78rem">'+(s.prevZone||'<span style="color:var(--muted)">None</span>')+'</td>'+
-      '<td><span class="badge '+catBadge(s.transferCategory)+'">'+s.transferCategory+'</span></td>'+
+      '<td style="font-size:.78rem">'+(s.prevZone||'<span style="color:var(--muted)">—</span>')+'</td>'+
+      '<td><span class="badge '+cb(s.transferCategory)+'">'+s.transferCategory+'</span></td>'+
       '<td>'+s.requestedZone+'</td>'+
       '<td>'+syncCell+'</td>'+
       '<td>'+docCell+'</td>'+
       '<td style="font-size:.77rem;white-space:nowrap">'+ts(s)+'</td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="btn btn-outline btn-sm" onclick="viewEntry(this.dataset.id)" data-id="'+eid+'" title="View">&#128065;</button> '+
-        '<button class="btn btn-green btn-sm" onclick="openWaMsg(this.dataset.id)" data-id="'+eid+'" title="WhatsApp">&#128241;</button> '+
-        '<button class="btn btn-danger btn-sm" onclick="confirmDel(this.dataset.id)" data-id="'+eid+'" title="Delete">&#128465;</button>'+
+        '<button class="btn btn-outline btn-sm" data-id="'+eid+'" onclick="viewEntry(this.dataset.id)" title="View">&#128065;</button> '+
+        '<button class="btn btn-green btn-sm" data-id="'+eid+'" onclick="openWaMsg(this.dataset.id)" title="WhatsApp">&#128241;</button> '+
+        '<button class="btn btn-danger btn-sm" data-id="'+eid+'" onclick="confirmDel(this.dataset.id)" title="Delete">&#128465;</button>'+
       '</td>'+
     '</tr>';
   }
-  wrap.innerHTML='<table><thead><tr>'+
-    '<th>#</th><th>Name</th><th>Emp ID</th><th>WhatsApp</th>'+
-    '<th>Scale</th><th>Promo Track</th><th>Present Zone</th><th>Prev Zone</th>'+
-    '<th>Transfer Cat.</th><th>Req. Zone</th>'+
-    '<th>Sync</th><th>Document</th><th>Submitted</th><th>Actions</th>'+
-    '</tr></thead><tbody>'+rows+'</tbody></table>';
+  wrap.innerHTML='<table><thead><tr><th>#</th><th>Name</th><th>Emp ID</th><th>WhatsApp</th><th>Scale</th><th>Track</th><th>Present Zone</th><th>Prev Zone</th><th>Transfer Cat.</th><th>Req. Zone</th><th>Sync</th><th>Document</th><th>Submitted</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
-// Retry sync for a single entry by empId
-async function reSync(empId){
-  var subs=getSubs();
-  var s=subs.find(function(x){return x.empId===empId;});
-  if(!s)return;
-  await syncOneEntry(s, null);
-  renderTable();
-}
-
+/* ============================================================
+   VIEW ENTRY
+============================================================ */
 function viewEntry(empId){
-  const s=getSubs().find(x=>x.empId===empId);if(!s)return;
-  let docCell='None uploaded';
-  if(s.supportingDoc&&s.supportingDoc!=='None'){
-    if(s.supportingDocLink){
-      docCell='<a href="'+s.supportingDocLink+'" target="_blank" '+
-               'style="color:var(--blue);font-weight:700;text-decoration:underline">'+
-               '&#128196; '+s.supportingDoc+'</a>';
-    } else {
-      docCell='<span style="font-weight:600">'+s.supportingDoc+'</span>'+
-              '<br><span style="font-size:.75rem;color:var(--muted)">'+
-              'Document uploaded — link will appear after GAS sync</span>';
-    }
+  var s=getSubs().find(function(x){ return x.empId===empId; });
+  if(!s){ alert('Entry not found for '+empId); return; }
+  var docCell='None uploaded';
+  if(s.supportingDocLink){
+    docCell='<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline">&#128196; '+
+      (s.supportingDoc?s.supportingDoc.split('_').slice(2).join('_'):'View Document')+'</a>';
+  } else if(s.supportingDoc&&s.supportingDoc!=='None'){
+    docCell='<span style="font-weight:600">'+s.supportingDoc+'</span><br><span style="font-size:.75rem;color:var(--muted)">Link pending (file uploaded)</span>';
   }
-  const rows=[
+  var rows=[
     ['Name',s.name],['Employee ID',s.empId],['WhatsApp',s.whatsapp],
     ['Officer Category',s.officerCategory],['Officer Scale',s.officerScale],
     ['Promotion Track',s.promoTrack||'-'],['Date of Promotion/Recruitment',s.promoDate||'-'],
     ['Association',s.association+(s.assocWarning==='Yes'?' &#9888;':'')],
-    ['Present Zone',s.presentZone],['Present Region',s.presentRegion],
-    ['Present Branch/Office',s.presentBranch],
+    ['Present Zone',s.presentZone],['Present Region',s.presentRegion],['Present Branch/Office',s.presentBranch],
     ['Date of Joining Zone',s.dateJoiningZone?new Date(s.dateJoiningZone).toLocaleDateString('en-IN'):'-'],
-    ['Date Warning Shown',s.dateWarning],
-    ['Previous Zone',s.prevZone||'Not applicable'],['Previous Zone Region',s.prevRegion||'N/A'],
-    ['Date of Joining Previous Zone',s.prevDojFormatted||'N/A'],
-    ['Transfer Category',s.transferCategory],['Transfer Details',s.transferDetails||'--'],
-    ['Supporting Document',docCell],['Requested Zone',s.requestedZone],
-    ['Req. Region Pref. 1',s.reqRegion1||'--'],['Req. Region Pref. 2',s.reqRegion2||'--'],
-    ['Req. Region Pref. 3',s.reqRegion3||'--'],
-    ['Domicile State',s.domicileState],['Domicile District',s.domicileDistrict],
-    ['Pincode',s.pincode],['Last Updated',new Date(s.timestamp).toLocaleString('en-IN')]
+    ['Date Warning',s.dateWarning],
+    ['Previous Zone',s.prevZone||'Not applicable'],['Previous Region',s.prevRegion||'N/A'],
+    ['Date of Joining Prev Zone',s.prevDojFormatted||'N/A'],
+    ['Transfer Category',s.transferCategory],['Transfer Details',s.transferDetails||'—'],
+    ['Supporting Document',docCell],
+    ['Requested Zone',s.requestedZone],
+    ['Region Pref. 1',s.reqRegion1||'—'],['Region Pref. 2',s.reqRegion2||'—'],['Region Pref. 3',s.reqRegion3||'—'],
+    ['Domicile State',s.domicileState],['Domicile District',s.domicileDistrict],['Pincode',s.pincode],
+    ['Last Updated',new Date(s.timestamp).toLocaleString('en-IN')],
+    ['Synced to Sheet',s.synced?'Yes':'No (pending sync)']
   ];
-  document.getElementById('entryDetail').innerHTML=
-    '<table>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+(r[1]||'--')+'</td></tr>').join('')+'</table>';
+  document.getElementById('entryDetail').innerHTML='<table>'+rows.map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+(r[1]||'—')+'</td></tr>'; }).join('')+'</table>';
   document.getElementById('entryMOv').classList.remove('hidden');
 }
-function closeEntryModal(){document.getElementById('entryMOv').classList.add('hidden');}
+function closeEntryModal(){ document.getElementById('entryMOv').classList.add('hidden'); }
+
+/* ============================================================
+   DELETE
+============================================================ */
+function confirmDel(empId){
+  showModal('Confirm Delete','Delete this submission permanently? This cannot be undone.',[
+    {label:'Cancel',cls:'btn-outline',fn:closeModal},
+    {label:'&#128465; Delete',cls:'btn-danger',fn:function(){ saveSubs(getSubs().filter(function(x){ return x.empId!==empId; })); closeModal(); renderTable(); renderStats(); }}
+  ]);
+}
+function confirmDeleteAll(){
+  var s=getSubs(); if(!s.length){ alert('No submissions to delete.'); return; }
+  showModal('Delete ALL Entries','Delete ALL '+s.length+' submissions? This is irreversible.',[
+    {label:'Cancel',cls:'btn-outline',fn:closeModal},
+    {label:'&#128465; Delete All',cls:'btn-danger',fn:function(){ saveSubs([]); closeModal(); renderTable(); renderStats(); }}
+  ]);
+}
+
+/* ============================================================
+   SYNC
+============================================================ */
+async function syncAllPending(){
+  var sabs=document.getElementById('syncAllBtn');
+  var banner=document.getElementById('gasStatusBanner');
+  var subs=getSubs();
+  var pending=subs.filter(function(s){ return !s.synced; });
+  if(!pending.length){
+    if(banner){ banner.style.cssText='background:var(--succbg);border:1px solid var(--succb);color:var(--green);padding:8px 14px;border-radius:6px;font-size:.82rem;margin-bottom:10px'; banner.innerHTML='&#10003; All entries are already synced.'; banner.classList.remove('hidden'); }
+    return;
+  }
+  if(sabs){ sabs.disabled=true; sabs.innerHTML='<span class="spin"></span>&nbsp; Syncing '+pending.length+'...'; }
+  var ok=0,fail=0;
+  for(var i=0;i<pending.length;i++){
+    try{
+      await syncOneEntry(pending[i],null);
+      ok++;
+    }catch(e){ fail++; }
+    if(sabs) sabs.innerHTML='<span class="spin"></span>&nbsp; '+(ok+fail)+'/'+pending.length+'...';
+  }
+  if(sabs){ sabs.disabled=false; sabs.innerHTML='&#9729; Sync All'; }
+  if(banner){
+    banner.style.cssText=(fail>0?'background:var(--warnbg);border:1px solid var(--warnb);color:#7a5000':'background:var(--succbg);border:1px solid var(--succb);color:var(--green)')+';padding:8px 14px;border-radius:6px;font-size:.82rem;margin-bottom:10px';
+    banner.innerHTML=ok+' synced'+(fail?' · '+fail+' failed':'');
+    banner.classList.remove('hidden');
+  }
+  renderTable(); renderStats();
+}
+
+async function syncOneEntry(sub,fileObj){
+  var activeGas=getGasUrl(); if(!activeGas) return;
+  var payload=Object.assign({},sub);
+  delete payload.synced;
+  payload.dobHashForStorage=sub.dobStored||sub.dobHash||'';
+  payload._type='dataOnly';
+  await fetch(activeGas,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+  await new Promise(function(r){setTimeout(r,2000);});
+  // Verify
+  try{
+    var vr=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    if(vr.ok){ var vd=await vr.json(); if(vd.found){ var s2=getSubs(); var i2=s2.findIndex(function(s){return s.empId===sub.empId;}); if(i2>=0){s2[i2].synced=true;saveSubs(s2);} } }
+  }catch(e){}
+}
+
+/* ============================================================
+   EXCEL EXPORT
+============================================================ */
+function exportExcel(){
+  var subs=getSubs(); if(!subs.length){ alert('No data to export.'); return; }
+  var headers=['Name','Employee ID','WhatsApp','Category','Scale','Promo Track','Promo Date',
+    'Association','Assoc Warning','Present Zone','Present Region','Present Branch','DOJ Zone',
+    'Prev Zone','Prev Region','Prev DOJ','Transfer Category','Transfer Details',
+    'Document Filename','Document Drive Link',
+    'Req Zone','Req Region 1','Req Region 2','Req Region 3',
+    'Dom State','Dom District','Pincode','Last Updated','Synced'];
+  var rows=subs.map(function(s){ return [
+    s.name,s.empId,s.whatsapp,s.officerCategory,s.officerScale,s.promoTrack||'',s.promoDate||'',
+    s.association,s.assocWarning,s.presentZone,s.presentRegion,s.presentBranch,
+    s.dateJoiningZone?new Date(s.dateJoiningZone).toLocaleDateString('en-IN'):'',
+    s.prevZone||'',s.prevRegion||'',s.prevDojFormatted||'',
+    s.transferCategory,s.transferDetails||'',
+    s.supportingDoc||'',s.supportingDocLink||'',
+    s.requestedZone,s.reqRegion1||'',s.reqRegion2||'',s.reqRegion3||'',
+    s.domicileState,s.domicileDistrict,s.pincode,
+    new Date(s.timestamp).toLocaleString('en-IN'),s.synced?'Yes':'No'
+  ]; });
+  var ws=XLSX.utils.aoa_to_sheet([headers].concat(rows));
+  ws['!cols']=headers.map(function(h,i){ return {wch:Math.max(h.length,Math.max.apply(null,rows.map(function(r){ return String(r[i]||'').length; }))+2)}; });
+  var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Submissions');
+  XLSX.writeFile(wb,'UBOA_KS_Transfer_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
 
 /* ============================================================
    WHATSAPP
 ============================================================ */
-const DEFAULT_WA_TEMPLATE=`*UBOA(KS) - Inter Zone Transfer Data Confirmation*
+DEFAULT_WA_TEMPLATE=`*UBOA(KS) - Inter Zone Transfer Data Confirmation*
 -----------------------------------------
 Dear {NAME},
 
@@ -1974,272 +1684,168 @@ Kindly reply:
 Thank you,
 UBOA(KS) - Union Bank Officers Association (Kerala State)`;
 
-function getTemplate(){const s=getSettings();return(s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE;}
-
+function getTemplate(){ var s=getSettings(); return (s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE; }
 function fillTemplate(template,s){
-  const fmt=d=>{if(!d)return'N/A';try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});}catch(e){return d;}};
+  var fmt=function(d){ if(!d)return'N/A'; try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});}catch(e){return d;} };
   return template
-    .replace(/{NAME}/g,s.name||'')
-    .replace(/{EMP_ID}/g,s.empId||'')
-    .replace(/{SCALE}/g,s.officerScale||'')
-    .replace(/{CATEGORY}/g,s.officerCategory||'')
-    .replace(/{PROMO_TRACK}/g,s.promoTrack||'')
-    .replace(/{PROMO_DATE}/g,s.promoDate||'')
-    .replace(/{ASSOC}/g,s.association||'')
-    .replace(/{PRESENT_ZONE}/g,s.presentZone||'')
-    .replace(/{PRESENT_REGION}/g,s.presentRegion||'')
-    .replace(/{PRESENT_BRANCH}/g,s.presentBranch||'')
-    .replace(/{DOJ_ZONE}/g,s.dateJoiningZone?fmt(s.dateJoiningZone):'N/A')
-    .replace(/{PREV_ZONE}/g,s.prevZone||'Not applicable')
-    .replace(/{PREV_REGION}/g,s.prevRegion||'N/A')
-    .replace(/{PREV_DOJ}/g,s.prevDojFormatted||'N/A')
-    .replace(/{TRANSFER_CAT}/g,s.transferCategory||'')
-    .replace(/{TRANSFER_DETAILS}/g,s.transferDetails||'N/A')
-    .replace(/{REQ_ZONE}/g,s.requestedZone||'')
-    .replace(/{REQ_R1}/g,s.reqRegion1||'N/A')
-    .replace(/{REQ_R2}/g,s.reqRegion2||'N/A')
-    .replace(/{REQ_R3}/g,s.reqRegion3||'N/A')
-    .replace(/{DOM_STATE}/g,s.domicileState||'')
-    .replace(/{DOM_DIST}/g,s.domicileDistrict||'')
-    .replace(/{PINCODE}/g,s.pincode||'')
+    .replace(/{NAME}/g,s.name||'').replace(/{EMP_ID}/g,s.empId||'').replace(/{SCALE}/g,s.officerScale||'')
+    .replace(/{CATEGORY}/g,s.officerCategory||'').replace(/{PROMO_TRACK}/g,s.promoTrack||'').replace(/{PROMO_DATE}/g,s.promoDate||'')
+    .replace(/{ASSOC}/g,s.association||'').replace(/{PRESENT_ZONE}/g,s.presentZone||'').replace(/{PRESENT_REGION}/g,s.presentRegion||'')
+    .replace(/{PRESENT_BRANCH}/g,s.presentBranch||'').replace(/{DOJ_ZONE}/g,s.dateJoiningZone?fmt(s.dateJoiningZone):'N/A')
+    .replace(/{PREV_ZONE}/g,s.prevZone||'Not applicable').replace(/{PREV_REGION}/g,s.prevRegion||'N/A').replace(/{PREV_DOJ}/g,s.prevDojFormatted||'N/A')
+    .replace(/{TRANSFER_CAT}/g,s.transferCategory||'').replace(/{TRANSFER_DETAILS}/g,s.transferDetails||'N/A')
+    .replace(/{REQ_ZONE}/g,s.requestedZone||'').replace(/{REQ_R1}/g,s.reqRegion1||'N/A').replace(/{REQ_R2}/g,s.reqRegion2||'N/A').replace(/{REQ_R3}/g,s.reqRegion3||'N/A')
+    .replace(/{DOM_STATE}/g,s.domicileState||'').replace(/{DOM_DIST}/g,s.domicileDistrict||'').replace(/{PINCODE}/g,s.pincode||'')
     .replace(/{DOC_LINK}/g,s.supportingDocLink||'No document uploaded');
 }
 
 function openWaMsg(empId){
-  const s=getSubs().find(x=>x.empId===empId);if(!s)return;
-  document.getElementById('waDisplayNum').textContent=s.whatsapp;
-  document.getElementById('waMsgText').value=fillTemplate(getTemplate(),s);
+  var s=getSubs().find(function(x){ return x.empId===empId; });
+  if(!s){ alert('Entry not found for '+empId); return; }
+  var wa=document.getElementById('waDisplayNum'); if(wa) wa.textContent=s.whatsapp;
+  var mt=document.getElementById('waMsgText'); if(mt) mt.value=fillTemplate(getTemplate(),s);
   document.getElementById('waMOv').classList.remove('hidden');
 }
-function closeWaModal(){document.getElementById('waMOv').classList.add('hidden');}
-function copyWaNum(){const num=document.getElementById('waDisplayNum').textContent;navigator.clipboard.writeText(num).then(()=>{const b=document.querySelector('.wa-copy-btn');const o=b.textContent;b.textContent='Copied!';setTimeout(()=>b.textContent=o,2000);}).catch(()=>alert('Number: '+num));}
-function copyWaMsg(){const txt=document.getElementById('waMsgText').value;navigator.clipboard.writeText(txt).then(()=>{const btns=document.querySelectorAll('.wa-actions .btn');const o=btns[1].textContent;btns[1].textContent='Copied!';setTimeout(()=>btns[1].textContent=o,2000);}).catch(()=>alert('Please copy manually.'));}
-function openWhatsApp(){const num=document.getElementById('waDisplayNum').textContent.replace(/\D/g,'');const msg=document.getElementById('waMsgText').value;window.open('https://wa.me/91'+num+'?text='+encodeURIComponent(msg),'_blank');}
-document.getElementById('waMOv').addEventListener('click',function(e){if(e.target===this)closeWaModal();});
-
-/* SETTINGS */
-function loadSettings(){
-  const s=getSettings();
-  document.getElementById('s_user').value=s.username;
-  document.getElementById('s_pass').value='';document.getElementById('s_passc').value='';
-  document.getElementById('s_cutoff').value=s.cutoffDate;
-  document.getElementById('s_years').value=s.minYears||3;
-  document.getElementById('s_watemplate').value=(s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE;
-  var currentGas=getGasUrl();
-  var gasEl=document.getElementById('s_gasurl');
-  if(gasEl) gasEl.value=currentGas;
-  var gasMsg=document.getElementById('gasUrlMsg');
-  if(gasMsg){
-    if(currentGas){
-      gasMsg.innerHTML='<div class="alert a-succ" style="margin:0"><span>&#10003;</span><div>URL is set. Click Test GET or Test POST to verify.</div></div>';
-    } else {
-      gasMsg.innerHTML='<div class="alert a-warn" style="margin:0"><span>&#9888;</span><div>No URL set yet. Paste your Apps Script Web App URL above and click Save URL.</div></div>';
-    }
-  }
+function closeWaModal(){ document.getElementById('waMOv').classList.add('hidden'); }
+function copyWaNum(){
+  var num=(document.getElementById('waDisplayNum')||{textContent:''}).textContent;
+  navigator.clipboard.writeText(num).then(function(){ var b=document.querySelector('.wa-copy-btn'); if(b){ var o=b.textContent; b.textContent='Copied!'; setTimeout(function(){ b.textContent=o; },2000); } }).catch(function(){ alert('Number: '+num); });
 }
-/* saveGasUrl placeholder */
+function copyWaMsg(){
+  var txt=(document.getElementById('waMsgText')||{value:''}).value;
+  navigator.clipboard.writeText(txt).then(function(){ alert('Message copied to clipboard.'); }).catch(function(){ alert('Please copy the message manually.'); });
+}
+function openWhatsApp(){
+  var num=(document.getElementById('waDisplayNum')||{textContent:''}).textContent.replace(/[^0-9]/g,'');
+  var msg=(document.getElementById('waMsgText')||{value:''}).value;
+  window.open('https://wa.me/91'+num+'?text='+encodeURIComponent(msg),'_blank');
+}
 
+/* ============================================================
+   SETTINGS
+============================================================ */
+function loadSettings(){
+  var s=getSettings();
+  var su=document.getElementById('s_user'); if(su) su.value=s.username;
+  var sp=document.getElementById('s_pass'); if(sp) sp.value='';
+  var spc=document.getElementById('s_passc'); if(spc) spc.value='';
+  var sc=document.getElementById('s_cutoff'); if(sc) sc.value=s.cutoffDate;
+  var sy=document.getElementById('s_years'); if(sy) sy.value=s.minYears||3;
+  var sg=document.getElementById('s_gasurl'); var gasVal=getGasUrl(); if(sg) sg.value=gasVal;
+  var gm=document.getElementById('gasUrlMsg');
+  if(gm){ if(gasVal){ gm.innerHTML='<div class="alert a-succ" style="margin:0"><span>&#10003;</span><div>URL is set. Click Test GET to verify connection.</div></div>'; } else { gm.innerHTML='<div class="alert a-warn" style="margin:0"><span>&#9888;</span><div>No URL set. Paste your Apps Script URL above and click Save URL, OR edit the HTML and replace PASTE_YOUR_GAS_URL_HERE.</div></div>'; } }
+  var wt=document.getElementById('s_watemplate'); if(wt) wt.value=(s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE;
+}
+function saveCredentials(){
+  var u=(document.getElementById('s_user')||{value:''}).value.trim();
+  var p=(document.getElementById('s_pass')||{value:''}).value;
+  var pc=(document.getElementById('s_passc')||{value:''}).value;
+  var msg=document.getElementById('credMsg');
+  if(!u){ if(msg){ msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>User ID cannot be empty.</div></div>'; msg.classList.remove('hidden'); } return; }
+  if(p&&p!==pc){ if(msg){ msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Passwords do not match.</div></div>'; msg.classList.remove('hidden'); } return; }
+  var s=getSettings(); s.username=u; if(p) s.password=p; saveSettings(s);
+  if(msg){ msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Credentials saved.</div></div>'; msg.classList.remove('hidden'); setTimeout(function(){ msg.classList.add('hidden'); },3000); }
+}
+function saveCutoff(){
+  var d=(document.getElementById('s_cutoff')||{value:''}).value;
+  var y=parseInt((document.getElementById('s_years')||{value:'3'}).value);
+  var msg=document.getElementById('cutoffMsg');
+  if(!d){ if(msg){ msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please select a date.</div></div>'; msg.classList.remove('hidden'); } return; }
+  var s=getSettings(); s.cutoffDate=d; s.minYears=y||3; saveSettings(s);
+  if(msg){ msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Cutoff settings saved.</div></div>'; msg.classList.remove('hidden'); setTimeout(function(){ msg.classList.add('hidden'); },3000); }
+}
 function saveGasUrl(){
   var url=(document.getElementById('s_gasurl')||{value:''}).value.trim();
   var msg=document.getElementById('gasUrlMsg');
-  if(!url){
-    if(msg){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please paste a URL first.</div></div>';}
-    return;
-  }
-  localStorage.setItem('ubksa_gasurl', url);
+  if(!url){ if(msg){ msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please paste a URL first.</div></div>'; msg.classList.remove('hidden'); } return; }
+  localStorage.setItem('ubksa_gasurl',url);
   var s=getSettings(); s.gasUrl=url; saveSettings(s);
-  if(msg){msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>URL saved. Click "Test GET" to verify connection, then "Test POST to Sheet" to verify data reaches the sheet.</div></div>';}
-  var disp=document.getElementById('gasUrlDisplay');if(disp)disp.textContent=' '+url;
-}
-
-async function testGasGet(){
-  var url=getGasUrl();
-  var res=document.getElementById('gasTestResult');
-  var msg=document.getElementById('gasUrlMsg');
-  if(!res)return;
-  res.style.display='block';
-  if(!url){
-    res.textContent='ERROR: No GAS URL set. Paste your URL in the field above and click Save URL first.';
-    res.style.color='#FF6B6B'; return;
-  }
-  res.style.color='#87CEEB';
-  res.textContent='GET '+url+'\nWaiting...';
-  try{
-    var resp=await fetch(url+'?action=ping&t='+Date.now(),{method:'GET',cache:'no-cache'});
-    var text=await resp.text();
-    res.style.color=resp.ok?'#90EE90':'#FF6B6B';
-    res.textContent='HTTP '+resp.status+'\n'+text;
-    if(resp.ok && text.includes('UBOA')){
-      if(msg)msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>GET test passed. Apps Script is reachable. Now click "Test POST to Sheet".</div></div>';
-    } else {
-      if(msg)msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>Unexpected response. See raw output below. If you see a login page, set "Who has access: Anyone" in your deployment.</div></div>';
-    }
-  }catch(e){
-    res.style.color='#FF6B6B';
-    res.textContent='FETCH ERROR: '+e.message+'\n\nThis usually means:\n1. The URL is wrong\n2. The deployment requires login (set Who has access: Anyone)\n3. Network/firewall issue';
-    if(msg)msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>GET failed: '+e.message+'</div></div>';
-  }
-}
-
-async function testGasPost(){
-  var url=getGasUrl();
-  var res=document.getElementById('gasTestResult');
-  var msg=document.getElementById('gasUrlMsg');
-  if(!res)return;
-  res.style.display='block';
-  if(!url){
-    res.textContent='ERROR: No GAS URL set. Paste your URL and click Save URL first.';
-    res.style.color='#FF6B6B'; return;
-  }
-  res.style.color='#87CEEB';
-  res.textContent='POST '+url+'\nSending test data to Google Sheet...\n(This sends a TEST row — you can delete it from the sheet)';
-  var testData={
-    _type:'dataOnly',
-    empId:'TEST_'+Date.now().toString().slice(-4),
-    name:'Connection Test',whatsapp:'9999999999',
-    officerCategory:'General Officer',officerScale:'Scale I Officer',
-    promoTrack:'Normal Track',promoDate:'',association:'AIBOC',
-    presentZone:'Ernakulam',presentRegion:'Ernakulam',
-    presentBranch:'Test Branch',dateJoiningZone:'',
-    prevZone:'',prevRegion:'',prevDojFormatted:'',
-    transferCategory:'Repatriation to Parent Zone',transferDetails:'',
-    supportingDoc:'None',supportingDocLink:'',
-    requestedZone:'Bangalore',reqRegion1:'',reqRegion2:'',reqRegion3:'',
-    domicileState:'Kerala',domicileDistrict:'Ernakulam',pincode:'682001',
-    dobHashForStorage:'1990-01-01',timestamp:new Date().toISOString()
-  };
-  try{
-    // Use no-cors POST (same as real submissions)
-    await fetch(url,{
-      method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(testData)
-    });
-    res.style.color='#F0B429';
-    res.textContent='POST sent (no-cors mode — no response body available).\n\nWaiting 3 seconds then checking if sheet was updated...';
-    await new Promise(function(r){setTimeout(r,3000);});
-    // Now try GET to verify it was written
-    try{
-      var chkResp=await fetch(url+'?action=getOfficer&empId='+encodeURIComponent(testData.empId)+'&t='+Date.now(),
-        {method:'GET',cache:'no-cache'});
-      var chkData=await chkResp.json();
-      if(chkData.found){
-        res.style.color='#90EE90';
-        res.textContent='SUCCESS! Test row was written to Google Sheet and verified.\n\nEmp ID: '+testData.empId+'\nName: '+chkData.data.name+'\n\nPlease delete the test row from your sheet.\n\nGoogle Sheets integration is working correctly.';
-        if(msg)msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div><strong>Google Sheets is working!</strong> Data is being synced correctly. Delete the test row from your sheet.</div></div>';
-      } else {
-        res.style.color='#FFA07A';
-        res.textContent='POST was sent but the row was NOT found in the sheet.\n\nMost likely causes:\n1. SPREADSHEET_ID in Apps Script is wrong\n2. SHEET_NAME does not match your tab name\n3. Apps Script has an error — check Execution log in script editor\n\nTo check: Open Apps Script → Execution log → look for errors';
-        if(msg)msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>POST sent but data not found in sheet. Check SPREADSHEET_ID and SHEET_NAME in your Apps Script.</div></div>';
-      }
-    }catch(ve){
-      res.style.color='#F0B429';
-      res.textContent='POST sent. Could not verify via GET ('+ve.message+').\nCheck your Google Sheet manually for a row with Emp ID: '+testData.empId;
-    }
-  }catch(e){
-    res.style.color='#FF6B6B';
-    res.textContent='POST FAILED: '+e.message;
-    if(msg)msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>POST failed: '+e.message+'</div></div>';
-  }
-}
-
-function testGasUrl(){testGasGet();}
-function testGasConnection(){testGasGet();}
-function saveCredentials(){
-  const u=document.getElementById('s_user').value.trim(),p=document.getElementById('s_pass').value,pc=document.getElementById('s_passc').value;
-  const msg=document.getElementById('credMsg');
-  if(!u){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>User ID cannot be empty.</div></div>';msg.classList.remove('hidden');return;}
-  if(p&&p!==pc){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Passwords do not match.</div></div>';msg.classList.remove('hidden');return;}
-  const s=getSettings();s.username=u;if(p)s.password=p;saveSettings(s);
-  msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Credentials saved.</div></div>';msg.classList.remove('hidden');
-  setTimeout(()=>msg.classList.add('hidden'),3000);
-}
-function saveCutoff(){
-  const d=document.getElementById('s_cutoff').value,y=parseInt(document.getElementById('s_years').value);
-  const msg=document.getElementById('cutoffMsg');if(!d){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please select a date.</div></div>';msg.classList.remove('hidden');return;}
-  const s=getSettings();s.cutoffDate=d;s.minYears=y||3;saveSettings(s);
-  msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Cutoff settings saved.</div></div>';msg.classList.remove('hidden');
-  setTimeout(()=>msg.classList.add('hidden'),3000);
+  if(msg){ msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>URL saved. Click Test GET to verify, then Test POST to confirm sheet is working.</div></div>'; msg.classList.remove('hidden'); }
 }
 function saveTemplate(){
-  const t=document.getElementById('s_watemplate').value;const msg=document.getElementById('templateMsg');
-  const s=getSettings();s.waTemplate=t;saveSettings(s);
-  msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Template saved for all future messages.</div></div>';msg.classList.remove('hidden');
-  setTimeout(()=>msg.classList.add('hidden'),3000);
+  var t=(document.getElementById('s_watemplate')||{value:''}).value;
+  var msg=document.getElementById('templateMsg');
+  var s=getSettings(); s.waTemplate=t; saveSettings(s);
+  if(msg){ msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Template saved.</div></div>'; msg.classList.remove('hidden'); setTimeout(function(){ msg.classList.add('hidden'); },3000); }
 }
 function resetTemplate(){
-  document.getElementById('s_watemplate').value=DEFAULT_WA_TEMPLATE;
-  const s=getSettings();s.waTemplate='';saveSettings(s);
-  const msg=document.getElementById('templateMsg');
-  msg.innerHTML='<div class="alert a-info"><span>&#8635;</span><div>Template reset to default.</div></div>';msg.classList.remove('hidden');
-  setTimeout(()=>msg.classList.add('hidden'),2500);
+  var wt=document.getElementById('s_watemplate'); if(wt) wt.value=DEFAULT_WA_TEMPLATE;
+  var s=getSettings(); s.waTemplate=''; saveSettings(s);
+  var msg=document.getElementById('templateMsg');
+  if(msg){ msg.innerHTML='<div class="alert a-info"><span>&#8635;</span><div>Template reset to default.</div></div>'; msg.classList.remove('hidden'); setTimeout(function(){ msg.classList.add('hidden'); },2500); }
 }
 
-/* DELETE / EXPORT */
-function confirmDel(empId){showModal('Confirm Delete','Delete this submission permanently?',[{label:'Cancel',cls:'btn-outline',fn:closeModal},{label:'Delete',cls:'btn-danger',fn:()=>{saveSubs(getSubs().filter(x=>x.empId!==empId));closeModal();renderTable();renderStats();}}]);}
-function confirmDeleteAll(){const s=getSubs();if(!s.length){alert('No submissions.');return;}showModal('Delete All','Delete ALL '+s.length+' submission(s)? Irreversible.',[{label:'Cancel',cls:'btn-outline',fn:closeModal},{label:'Delete All',cls:'btn-danger',fn:()=>{saveSubs([]);closeModal();renderTable();renderStats();}}]);}
-
-function exportExcel(){
-  const subs=getSubs();if(!subs.length){alert('No data to export.');return;}
-  const headers=[
-    'Name','Employee ID','WhatsApp','Officer Category','Officer Scale',
-    'Promotion Track','Date of Promotion/Recruitment','Association','Assoc. Warning',
-    'Present Zone','Present Region','Present Branch/Office','Date of Joining Zone','Date Warning',
-    'Previous Zone','Previous Region','Date of Joining Previous Zone',
-    'Transfer Category','Transfer Details',
-    'Supporting Document Name','Supporting Document (Drive Link)',
-    'Requested Zone','Req. Region Pref 1','Req. Region Pref 2','Req. Region Pref 3',
-    'Domicile State','Domicile District','Pincode','Last Updated'
-  ];
-  const rows=subs.map(function(s){return[
-    s.name,s.empId,s.whatsapp,s.officerCategory,s.officerScale,
-    s.promoTrack||'',s.promoDate||'',s.association,s.assocWarning,
-    s.presentZone,s.presentRegion,s.presentBranch,
-    s.dateJoiningZone?new Date(s.dateJoiningZone).toLocaleDateString('en-IN'):'',
-    s.dateWarning,
-    s.prevZone||'',s.prevRegion||'',s.prevDojFormatted||'',
-    s.transferCategory,s.transferDetails||'',
-    s.supportingDoc||'',s.supportingDocLink||'',
-    s.requestedZone,s.reqRegion1||'',s.reqRegion2||'',s.reqRegion3||'',
-    s.domicileState,s.domicileDistrict,s.pincode,
-    new Date(s.timestamp).toLocaleString('en-IN')
-  ];});
-  const ws=XLSX.utils.aoa_to_sheet([headers].concat(rows));
-  ws['!cols']=headers.map(function(h,i){return{wch:Math.max(h.length,Math.max.apply(null,rows.map(function(r){return String(r[i]||'').length;}))+2)};});
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Transfer Requests');
-  XLSX.writeFile(wb,'UBOA_KS_InterZoneTransfer_'+new Date().toISOString().slice(0,10)+'.xlsx');
+/* ============================================================
+   GAS TESTING
+============================================================ */
+async function testGasConnection(){
+  var banner=document.getElementById('gasStatusBanner');
+  var activeGas=getGasUrl();
+  function showB(bg,bc,color,msg){ if(banner){ banner.style.cssText='background:'+bg+';border:1px solid '+bc+';color:'+color+';padding:10px 14px;border-radius:6px;font-size:.83rem;margin-bottom:10px'; banner.innerHTML=msg; banner.classList.remove('hidden'); } }
+  if(!activeGas){ showB('var(--warnbg)','var(--warnb)','#7a5000','&#9888; <strong>GAS URL not configured.</strong> Open HTML in text editor and set <code>GAS_URL_HARDCODED</code>, or go to Settings and paste URL there.'); return; }
+  showB('var(--infobg)','var(--infob)','var(--navy)','<span class="spin" style="width:12px;height:12px;border-width:2px;border-color:rgba(0,35,102,.3);border-top-color:var(--navy);display:inline-block"></span> Testing connection...');
+  try{
+    var resp=await fetch(activeGas+'?action=ping&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    if(resp.ok){
+      var data=await resp.json();
+      var unsynced=getSubs().filter(function(s){ return !s.synced; }).length;
+      showB('var(--succbg)','var(--succb)','var(--green)','&#10003; <strong>Connected to Google Sheets.</strong>'+(unsynced?' '+unsynced+' entries pending sync.':''));
+    } else { showB('var(--errbg)','var(--errb)','var(--red)','&#10060; HTTP '+resp.status+' — Open the GAS URL in a browser tab to see the error.'); }
+  }catch(err){ showB('var(--errbg)','var(--errb)','var(--red)','&#10060; '+err.message+'. Ensure: 1) URL is correct 2) Deployed with "Who has access: Anyone" 3) SPREADSHEET_ID is set in script.'); }
+}
+function testGasUrl(){ testGasConnection(); }
+async function testGasGet(){ testGasConnection(); }
+async function testGasPost(){
+  var url=getGasUrl(); var res=document.getElementById('gasTestResult'); var msg=document.getElementById('gasUrlMsg');
+  if(res) res.style.display='block';
+  if(!url){ if(res){ res.style.color='#FF6B6B'; res.textContent='No GAS URL set.'; } return; }
+  if(res){ res.style.color='#87CEEB'; res.textContent='Sending test data to sheet...'; }
+  var testData={_type:'dataOnly',empId:'TEST_'+Date.now().toString().slice(-4),name:'Connection Test',whatsapp:'9999999999',officerCategory:'General Officer',officerScale:'Scale I Officer',promoTrack:'Normal Track',promoDate:'',association:'AIBOC',presentZone:'Ernakulam',presentRegion:'Ernakulam',presentBranch:'Test',dateJoiningZone:'',prevZone:'',prevRegion:'',prevDojFormatted:'',transferCategory:'Repatriation to Parent Zone',transferDetails:'',supportingDoc:'None',supportingDocLink:'',requestedZone:'Bangalore',reqRegion1:'',reqRegion2:'',reqRegion3:'',domicileState:'Kerala',domicileDistrict:'Ernakulam',pincode:'682001',dobHashForStorage:'1990-01-01',timestamp:new Date().toISOString()};
+  try{
+    await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(testData)});
+    if(res){ res.style.color='#F0B429'; res.textContent='POST sent. Verifying in 3s...'; }
+    await new Promise(function(r){setTimeout(r,3000);});
+    var chk=await fetch(url+'?action=getOfficer&empId='+encodeURIComponent(testData.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    var cd=await chk.json();
+    if(cd.found){
+      if(res){ res.style.color='#90EE90'; res.textContent='SUCCESS! Test row written. Delete it from your sheet.'; }
+      if(msg) msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Google Sheets is working correctly.</div></div>';
+    } else {
+      if(res){ res.style.color='#FFA07A'; res.textContent='POST sent but row NOT found. Check SPREADSHEET_ID in Apps Script and run testWrite() there.'; }
+      if(msg) msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>POST sent but data not found in sheet. Verify SPREADSHEET_ID.</div></div>';
+    }
+  }catch(e){ if(res){ res.style.color='#FF6B6B'; res.textContent='Error: '+e.message; } }
 }
 
-/* MODAL */
+/* ============================================================
+   MODAL
+============================================================ */
 function showModal(title,msg,actions){
-  document.getElementById('mTitle').textContent=title;document.getElementById('mMsg').textContent=msg;
-  const ac=document.getElementById('mActs');ac.innerHTML='';
-  actions.forEach(a=>{const b=document.createElement('button');b.className='btn '+a.cls;b.innerHTML=a.label;b.onclick=a.fn;ac.appendChild(b);});
+  document.getElementById('mTitle').textContent=title;
+  document.getElementById('mMsg').textContent=msg;
+  var ac=document.getElementById('mActs'); ac.innerHTML='';
+  actions.forEach(function(a){ var b=document.createElement('button'); b.className='btn '+a.cls; b.innerHTML=a.label; b.onclick=a.fn; ac.appendChild(b); });
   document.getElementById('modalOv').classList.remove('hidden');
 }
-function closeModal(){document.getElementById('modalOv').classList.add('hidden');}
-document.getElementById('modalOv').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.getElementById('entryMOv').addEventListener('click',function(e){if(e.target===this)closeEntryModal();});
+function closeModal(){ document.getElementById('modalOv').classList.add('hidden'); }
 
-/* INIT */
-document.addEventListener('DOMContentLoaded',()=>{
+document.getElementById('modalOv').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.getElementById('entryMOv').addEventListener('click',function(e){ if(e.target===this) closeEntryModal(); });
+document.getElementById('waMOv').addEventListener('click',function(e){ if(e.target===this) closeWaModal(); });
+
+/* ============================================================
+   INIT
+============================================================ */
+document.addEventListener('DOMContentLoaded',function(){
+  initDropdowns();
+  var today=new Date().toISOString().split('T')[0];
+  var dojEl=document.getElementById('f_doj'); if(dojEl) dojEl.max=today;
+  var pdEl=document.getElementById('f_promoDate'); if(pdEl) pdEl.max=today;
+  var pvEl=document.getElementById('f_prevDoj'); if(pvEl) pvEl.max=today;
   // Restore GAS URL from localStorage if set
-  try{
-    var storedGas=localStorage.getItem('ubksa_gasurl');
-    if(storedGas){var s=getSettings();s.gasUrl=storedGas;saveSettings(s);}
-  }catch(e){}
-  if(isAdminIn()){showPage('adminDashboard');refreshDash();}
-  // Enter key on officer login
-  ['ol_empid','ol_dob','ol_wa'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doOfficerLogin();});
-  });
-  // Set max dates (null-safe)
-  const today=new Date().toISOString().split('T')[0];
-  const dojEl=document.getElementById('f_doj');if(dojEl)dojEl.max=today;
-  const pdEl=document.getElementById('f_promoDate');if(pdEl)pdEl.max=today;
-  const pvDojEl=document.getElementById('f_prevDoj');if(pvDojEl)pvDojEl.max=today;
+  try{ var sg=localStorage.getItem('ubksa_gasurl'); if(sg){ var s=getSettings(); s.gasUrl=sg; saveSettings(s); } }catch(e){}
+  ['ol_empid','ol_dob','ol_wa'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('keydown',function(e){ if(e.key==='Enter') doOfficerLogin(); }); });
+  if(isAdminIn()){ showPage('adminDashboard'); refreshDash(); }
 });
 </script>
 </body>
