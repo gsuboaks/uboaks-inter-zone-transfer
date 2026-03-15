@@ -555,7 +555,7 @@ table tbody td{padding:9px 10px;vertical-align:top}
     </div>
     <div class="advisory-acts">
       <button class="btn btn-outline" onclick="closeAdvisory()">Go Back &amp; Check</button>
-      <button class="btn btn-primary" id="finalSubmitBtn" onclick="this.disabled=true;this.innerHTML='<span class=\"spin\"></span>&nbsp; Saving...';doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
+      <button class="btn btn-primary" id="finalSubmitBtn" onclick="doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
     </div>
   </div>
 </div>
@@ -1179,6 +1179,13 @@ function handleSubmitClick(){
 function closeAdvisory(){document.getElementById('advisoryOverlay').classList.add('hidden');}
 
 async function doFinalSubmit(){
+  // Disable button and show spinner immediately
+  const submitBtn=document.getElementById('finalSubmitBtn');
+  if(submitBtn){
+    submitBtn.disabled=true;
+    submitBtn.textContent='Saving...';
+  }
+
   // Hide advisory overlay
   document.getElementById('advisoryOverlay').classList.add('hidden');
 
@@ -1212,85 +1219,82 @@ async function doFinalSubmit(){
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  // ── STEP 1: Save locally immediately ────────────────────────────
-  let subs=getSubs();
-  const localIdx=subs.findIndex(s=>s.empId===currentOfficer.empId);
+  // ── Save locally immediately ───────────────────────────────────
+  var subs=getSubs();
+  var localIdx=subs.findIndex(function(s){return s.empId===currentOfficer.empId;});
   if(localIdx>=0)subs[localIdx]=sub; else subs.push(sub);
   saveSubs(subs);
 
-  // ── STEP 2: Show success page immediately — user never waits for GAS ─
+  // ── Show success page immediately — user never waits for GAS ──
   document.getElementById('succName').textContent=sub.name;
+  if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='I Have Noted \u2014 Submit Now';}
   showPage('successPage');
 
-  // ── STEP 3: GAS sync runs in background after page shows ────────
-  // Capture selFile reference before it gets cleared
-  const fileToUpload=selFile;
-  const empIdForSync=currentOfficer.empId;
-  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  // ── GAS sync runs silently in background ───────────────────────
+  var fileToUpload=selFile;
+  var empIdForSync=currentOfficer.empId;
+  var activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
 
   if(activeGas){
-    // Helper: fetch with timeout so nothing ever hangs
-    function fetchWithTimeout(url,options,ms){
-      const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),ms);
-      return fetch(url,{...options,signal:controller.signal})
-        .finally(()=>clearTimeout(timer));
+    function fetchWithTimeout(url,opts,ms){
+      var ctrl=new AbortController();
+      var timer=setTimeout(function(){ctrl.abort();},ms);
+      return fetch(url,Object.assign({},opts,{signal:ctrl.signal}))
+        .finally(function(){clearTimeout(timer);});
     }
 
-    // Run background sync without blocking UI
-    (async()=>{
-      try{
-        const payload={...sub};
-        delete payload.dobHash;
-        payload.dobHashForStorage=sub.dobHash;
+    (function(){
+      var payload=Object.assign({},sub);
+      delete payload.dobHash;
+      payload.dobHashForStorage=sub.dobHash;
 
-        if(fileToUpload){
-          const b64=await new Promise((res,rej)=>{
-            const reader=new FileReader();
-            reader.onload=ev=>res(ev.target.result.split(',')[1]);
-            reader.onerror=()=>rej(new Error('File read failed'));
-            reader.readAsDataURL(fileToUpload);
-          });
-          payload.fileData=b64;
-          payload.mimeType=fileToUpload.type||'application/octet-stream';
-          payload.fileName=empIdForSync+'_'+Date.now()+'_'+fileToUpload.name;
-        }
-
-        // POST with no-cors + 30s timeout
-        await fetchWithTimeout(activeGas,{
+      var sendPayload=function(p){
+        fetchWithTimeout(activeGas,{
           method:'POST',
           mode:'no-cors',
           headers:{'Content-Type':'text/plain'},
-          body:JSON.stringify(payload)
-        },30000);
-
-        // If file was uploaded, GET-back after 4s to retrieve driveLink
-        if(fileToUpload){
-          await new Promise(r=>setTimeout(r,4000));
-          try{
-            const getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empIdForSync)+'&t='+Date.now();
-            const getResp=await fetchWithTimeout(getUrl,{method:'GET',cache:'no-cache'},10000);
-            if(getResp.ok){
-              const result=await getResp.json();
-              if(result.found&&result.data&&result.data.supportingDocLink){
-                // Update localStorage with driveLink — admin sees it next time they view
-                let subs3=getSubs();
-                const i3=subs3.findIndex(s=>s.empId===empIdForSync);
-                if(i3>=0){
-                  subs3[i3].supportingDocLink=result.data.supportingDocLink;
-                  subs3[i3].supportingDoc=result.data.supportingDoc||subs3[i3].supportingDoc;
-                  saveSubs(subs3);
+          body:JSON.stringify(p)
+        },30000)
+        .then(function(){
+          if(fileToUpload){
+            return new Promise(function(r){setTimeout(r,4000);})
+              .then(function(){
+                var getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empIdForSync)+'&t='+Date.now();
+                return fetchWithTimeout(getUrl,{method:'GET',cache:'no-cache'},10000);
+              })
+              .then(function(resp){return resp.json();})
+              .then(function(result){
+                if(result.found&&result.data&&result.data.supportingDocLink){
+                  var s3=getSubs();
+                  var i3=s3.findIndex(function(s){return s.empId===empIdForSync;});
+                  if(i3>=0){
+                    s3[i3].supportingDocLink=result.data.supportingDocLink;
+                    s3[i3].supportingDoc=result.data.supportingDoc||s3[i3].supportingDoc;
+                    saveSubs(s3);
+                  }
                 }
-              }
-            }
-          }catch(e2){
-            console.warn('Drive link retrieval failed (non-critical):', e2.message);
+              });
           }
-        }
-      }catch(err){
-        console.warn('Background GAS sync failed (data is safe in localStorage):', err.message);
+        })
+        .catch(function(err){
+          console.warn('Background GAS sync failed (data safe in localStorage):',err.message);
+        });
+      };
+
+      if(fileToUpload){
+        var reader=new FileReader();
+        reader.onload=function(ev){
+          payload.fileData=ev.target.result.split(',')[1];
+          payload.mimeType=fileToUpload.type||'application/octet-stream';
+          payload.fileName=empIdForSync+'_'+Date.now()+'_'+fileToUpload.name;
+          sendPayload(payload);
+        };
+        reader.onerror=function(){sendPayload(payload);};
+        reader.readAsDataURL(fileToUpload);
+      } else {
+        sendPayload(payload);
       }
-    })(); // immediately invoked — runs in background
+    })();
   }
 }
 
