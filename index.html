@@ -662,19 +662,21 @@ table tbody td{padding:9px 10px;vertical-align:top}
           <div id="cutoffMsg" class="hidden" style="margin-top:8px"></div>
         </div>
         <div class="sett-sec sett-full" style="margin-bottom:0">
-          <h3>&#9729;&#65039; Google Integration Status</h3>
-          <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px;line-height:1.6">
-            The Google Apps Script URL is hardcoded in this file. All form submissions automatically sync to Google Sheets and upload documents to Google Drive.
-            To change the URL, open the HTML file in a text editor and update the <code style="background:#eee;padding:1px 6px;border-radius:4px;font-size:.82rem">GAS_URL</code> constant near the top of the &lt;script&gt; section.
+          <h3>&#9729;&#65039; Google Sheets Integration</h3>
+          <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px;line-height:1.7">
+            Paste your Google Apps Script Web App URL here. Once saved, all submissions from all devices will sync to your Google Sheet automatically. This setting is stored on this browser — to use on another admin device, paste and save there too.
           </p>
-          <div style="background:#f5f8ff;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 14px;font-size:.83rem">
-            <span style="font-weight:700;color:var(--navy)">Current GAS URL:</span>
-            <span id="gasUrlDisplay" style="color:var(--muted);font-family:monospace;font-size:.78rem;word-break:break-all"></span>
+          <div class="field">
+            <label for="s_gasurl">Apps Script Web App URL <span style="font-size:.75rem;font-weight:400;color:var(--muted)">(from Deploy → New deployment)</span></label>
+            <input type="url" id="s_gasurl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:.85rem;font-family:monospace">
           </div>
-          <div style="margin-top:10px">
-            <button class="btn btn-outline btn-sm" onclick="testGasConnection()">&#9654; Test Connection</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <button class="btn btn-primary btn-sm" onclick="saveGasUrl()">&#128190; Save URL</button>
+            <button class="btn btn-outline btn-sm" onclick="testGasGet()">&#128269; Test GET</button>
+            <button class="btn btn-green btn-sm" onclick="testGasPost()">&#9654; Test POST to Sheet</button>
           </div>
-          <div id="gasUrlMsg" class="hidden" style="margin-top:8px"></div>
+          <div id="gasUrlMsg" style="margin-bottom:6px"></div>
+          <div id="gasTestResult" style="background:#1a1a2e;color:#e0e0e0;font-family:monospace;font-size:.78rem;padding:12px;border-radius:6px;min-height:32px;display:none;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto"></div>
         </div>
         <div class="sett-sec sett-full">
           <h3>&#128241; WhatsApp Message Template</h3>
@@ -758,16 +760,28 @@ const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","
 
 /* STORAGE */
 /* ============================================================
-   HARDCODED GOOGLE APPS SCRIPT URL
-   Paste your deployed Web App URL below (between the quotes).
-   Leave blank ('') to run offline-only.
+   GOOGLE APPS SCRIPT URL
+   Either paste your URL here (between the quotes),
+   OR leave as-is and enter it in Admin → Settings.
+   The admin settings value always takes priority.
 ============================================================ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz6H6bujONZOPhEsKOjvrE064rm4k6nmo0PF8IFxTrDRYnx_DMri6PNfZfXDN_g62Kb/exec';
+const GAS_URL_HARDCODED = 'PASTE_YOUR_GAS_URL_HERE';
+
+// Always use this function to get the active GAS URL.
+// Admin settings take priority over the hardcoded value.
+function getGasUrl(){
+  try{
+    var fromSettings=localStorage.getItem('ubksa_gasurl')||'';
+    if(fromSettings && fromSettings!=='PASTE_YOUR_GAS_URL_HERE') return fromSettings;
+  }catch(e){}
+  if(GAS_URL_HARDCODED && GAS_URL_HARDCODED!=='PASTE_YOUR_GAS_URL_HERE') return GAS_URL_HARDCODED;
+  return '';
+}
 
 const SK='ubksa_subs5',SS='ubksa_settings5',SA='ubksa_admauth5';
 const getSubs=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
 const saveSubs=d=>localStorage.setItem(SK,JSON.stringify(d));
-const getSettings=()=>{const def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:''};try{return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}'));}catch(e){return def;}};
+const getSettings=()=>{const def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:'',gasUrl:''};try{return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}'));}catch(e){return def;}};
 const saveSettings=s=>localStorage.setItem(SS,JSON.stringify(s));
 const isAdminIn=()=>sessionStorage.getItem(SA)==='true';
 const setAdminIn=v=>v?sessionStorage.setItem(SA,'true'):sessionStorage.removeItem(SA);
@@ -824,7 +838,7 @@ async function doOfficerLogin(){
   let existing=localSubs.find(function(s){return s.empId===empId;});
 
   // 2. If not found locally, fetch from Google Sheets (cross-browser/device)
-  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  const activeGas=getGasUrl();
   if(!existing && activeGas){
     setBtn('<span class="spin"></span>&nbsp; Loading your data...',true);
     try{
@@ -1247,7 +1261,7 @@ async function doFinalSubmit(){
 
 // Sync a single entry to GAS. Can be called from background or manually.
 async function syncOneEntry(sub, fileObj){
-  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  const activeGas=getGasUrl();
   if(!activeGas)return;
   try{
     const payload=Object.assign({},sub);
@@ -1357,7 +1371,7 @@ async function syncAllPending(){
 async function testGasConnection(){
   const banner=document.getElementById('gasStatusBanner');
   const diagDiv=document.getElementById('gasDiagDetails');
-  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  const activeGas=getGasUrl();
 
   function showBanner(bg, bc, color, msg){
     if(banner){
@@ -1779,10 +1793,125 @@ function loadSettings(){
   document.getElementById('s_cutoff').value=s.cutoffDate;
   document.getElementById('s_years').value=s.minYears||3;
   document.getElementById('s_watemplate').value=(s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE;
-  const gd=document.getElementById('gasUrlDisplay');if(gd)gd.textContent=' '+(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE'?GAS_URL:'(not set - paste your GAS URL in the HTML file)');
+  var currentGas=getGasUrl();
+  var gasEl=document.getElementById('s_gasurl');
+  if(gasEl) gasEl.value=currentGas;
+  var gasMsg=document.getElementById('gasUrlMsg');
+  if(gasMsg){
+    if(currentGas){
+      gasMsg.innerHTML='<div class="alert a-succ" style="margin:0"><span>&#10003;</span><div>URL is set. Click Test GET or Test POST to verify.</div></div>';
+    } else {
+      gasMsg.innerHTML='<div class="alert a-warn" style="margin:0"><span>&#9888;</span><div>No URL set yet. Paste your Apps Script Web App URL above and click Save URL.</div></div>';
+    }
+  }
 }
-/* saveGasUrl removed - URL now hardcoded in GAS_URL constant */
-function testGasUrl(){testGasConnection();}
+/* saveGasUrl placeholder */
+
+function saveGasUrl(){
+  var url=(document.getElementById('s_gasurl')||{value:''}).value.trim();
+  var msg=document.getElementById('gasUrlMsg');
+  if(!url){
+    if(msg){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please paste a URL first.</div></div>';}
+    return;
+  }
+  localStorage.setItem('ubksa_gasurl', url);
+  var s=getSettings(); s.gasUrl=url; saveSettings(s);
+  if(msg){msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>URL saved. Click "Test GET" to verify connection, then "Test POST to Sheet" to verify data reaches the sheet.</div></div>';}
+  var disp=document.getElementById('gasUrlDisplay');if(disp)disp.textContent=' '+url;
+}
+
+async function testGasGet(){
+  var url=getGasUrl();
+  var res=document.getElementById('gasTestResult');
+  var msg=document.getElementById('gasUrlMsg');
+  if(!res)return;
+  res.style.display='block';
+  if(!url){
+    res.textContent='ERROR: No GAS URL set. Paste your URL in the field above and click Save URL first.';
+    res.style.color='#FF6B6B'; return;
+  }
+  res.style.color='#87CEEB';
+  res.textContent='GET '+url+'\nWaiting...';
+  try{
+    var resp=await fetch(url+'?action=ping&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    var text=await resp.text();
+    res.style.color=resp.ok?'#90EE90':'#FF6B6B';
+    res.textContent='HTTP '+resp.status+'\n'+text;
+    if(resp.ok && text.includes('UBOA')){
+      if(msg)msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>GET test passed. Apps Script is reachable. Now click "Test POST to Sheet".</div></div>';
+    } else {
+      if(msg)msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>Unexpected response. See raw output below. If you see a login page, set "Who has access: Anyone" in your deployment.</div></div>';
+    }
+  }catch(e){
+    res.style.color='#FF6B6B';
+    res.textContent='FETCH ERROR: '+e.message+'\n\nThis usually means:\n1. The URL is wrong\n2. The deployment requires login (set Who has access: Anyone)\n3. Network/firewall issue';
+    if(msg)msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>GET failed: '+e.message+'</div></div>';
+  }
+}
+
+async function testGasPost(){
+  var url=getGasUrl();
+  var res=document.getElementById('gasTestResult');
+  var msg=document.getElementById('gasUrlMsg');
+  if(!res)return;
+  res.style.display='block';
+  if(!url){
+    res.textContent='ERROR: No GAS URL set. Paste your URL and click Save URL first.';
+    res.style.color='#FF6B6B'; return;
+  }
+  res.style.color='#87CEEB';
+  res.textContent='POST '+url+'\nSending test data to Google Sheet...\n(This sends a TEST row — you can delete it from the sheet)';
+  var testData={
+    empId:'TEST_'+Date.now().toString().slice(-4),
+    name:'Connection Test',whatsapp:'9999999999',
+    officerCategory:'General Officer',officerScale:'Scale I Officer',
+    promoTrack:'Normal Track',promoDate:'',association:'AIBOC',
+    presentZone:'Ernakulam',presentRegion:'Ernakulam',
+    presentBranch:'Test Branch',dateJoiningZone:'',
+    prevZone:'',prevRegion:'',prevDojFormatted:'',
+    transferCategory:'Repatriation to Parent Zone',transferDetails:'',
+    supportingDoc:'None',supportingDocLink:'',
+    requestedZone:'Bangalore',reqRegion1:'',reqRegion2:'',reqRegion3:'',
+    domicileState:'Kerala',domicileDistrict:'Ernakulam',pincode:'682001',
+    dobHashForStorage:'1990-01-01',timestamp:new Date().toISOString()
+  };
+  try{
+    // Use no-cors POST (same as real submissions)
+    await fetch(url,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(testData)
+    });
+    res.style.color='#F0B429';
+    res.textContent='POST sent (no-cors mode — no response body available).\n\nWaiting 3 seconds then checking if sheet was updated...';
+    await new Promise(function(r){setTimeout(r,3000);});
+    // Now try GET to verify it was written
+    try{
+      var chkResp=await fetch(url+'?action=getOfficer&empId='+encodeURIComponent(testData.empId)+'&t='+Date.now(),
+        {method:'GET',cache:'no-cache'});
+      var chkData=await chkResp.json();
+      if(chkData.found){
+        res.style.color='#90EE90';
+        res.textContent='SUCCESS! Test row was written to Google Sheet and verified.\n\nEmp ID: '+testData.empId+'\nName: '+chkData.data.name+'\n\nPlease delete the test row from your sheet.\n\nGoogle Sheets integration is working correctly.';
+        if(msg)msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div><strong>Google Sheets is working!</strong> Data is being synced correctly. Delete the test row from your sheet.</div></div>';
+      } else {
+        res.style.color='#FFA07A';
+        res.textContent='POST was sent but the row was NOT found in the sheet.\n\nMost likely causes:\n1. SPREADSHEET_ID in Apps Script is wrong\n2. SHEET_NAME does not match your tab name\n3. Apps Script has an error — check Execution log in script editor\n\nTo check: Open Apps Script → Execution log → look for errors';
+        if(msg)msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>POST sent but data not found in sheet. Check SPREADSHEET_ID and SHEET_NAME in your Apps Script.</div></div>';
+      }
+    }catch(ve){
+      res.style.color='#F0B429';
+      res.textContent='POST sent. Could not verify via GET ('+ve.message+').\nCheck your Google Sheet manually for a row with Emp ID: '+testData.empId;
+    }
+  }catch(e){
+    res.style.color='#FF6B6B';
+    res.textContent='POST FAILED: '+e.message;
+    if(msg)msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>POST failed: '+e.message+'</div></div>';
+  }
+}
+
+function testGasUrl(){testGasGet();}
+function testGasConnection(){testGasGet();}
 function saveCredentials(){
   const u=document.getElementById('s_user').value.trim(),p=document.getElementById('s_pass').value,pc=document.getElementById('s_passc').value;
   const msg=document.getElementById('credMsg');
@@ -1862,6 +1991,11 @@ document.getElementById('entryMOv').addEventListener('click',function(e){if(e.ta
 
 /* INIT */
 document.addEventListener('DOMContentLoaded',()=>{
+  // Restore GAS URL from localStorage if set
+  try{
+    var storedGas=localStorage.getItem('ubksa_gasurl');
+    if(storedGas){var s=getSettings();s.gasUrl=storedGas;saveSettings(s);}
+  }catch(e){}
   if(isAdminIn()){showPage('adminDashboard');refreshDash();}
   // Enter key on officer login
   ['ol_empid','ol_dob','ol_wa'].forEach(id=>{
