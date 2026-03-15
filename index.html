@@ -644,17 +644,16 @@ table tbody td{padding:9px 10px;vertical-align:top}
           <div id="cutoffMsg" class="hidden" style="margin-top:8px"></div>
         </div>
         <div class="sett-sec sett-full" style="margin-bottom:0">
-          <h3>&#9729;&#65039; Google Integration (Apps Script URL)</h3>
+          <h3>&#9729;&#65039; Google Integration Status</h3>
           <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px;line-height:1.6">
-            Enter your Google Apps Script Web App URL to enable automatic data sync to Google Sheets and document upload to Google Drive.
-            When set, form submissions will send data to your sheet and upload supporting documents to your Drive folder, returning a shareable link.
+            The Google Apps Script URL is hardcoded in this file. All form submissions automatically sync to Google Sheets and upload documents to Google Drive.
+            To change the URL, open the HTML file in a text editor and update the <code style="background:#eee;padding:1px 6px;border-radius:4px;font-size:.82rem">GAS_URL</code> constant near the top of the &lt;script&gt; section.
           </p>
-          <div class="field">
-            <label for="s_gasurl">Apps Script Web App URL</label>
-            <input type="url" id="s_gasurl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:.82rem">
+          <div style="background:#f5f8ff;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 14px;font-size:.83rem">
+            <span style="font-weight:700;color:var(--navy)">Current GAS URL:</span>
+            <span id="gasUrlDisplay" style="color:var(--muted);font-family:monospace;font-size:.78rem;word-break:break-all"></span>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-            <button class="btn btn-primary btn-sm" onclick="saveGasUrl()">Save URL</button>
+          <div style="margin-top:10px">
             <button class="btn btn-outline btn-sm" onclick="testGasUrl()">&#9654; Test Connection</button>
           </div>
           <div id="gasUrlMsg" class="hidden" style="margin-top:8px"></div>
@@ -740,10 +739,17 @@ const ZONE_REGIONS={"Bangalore":["Ballari","Bengaluru East","Bengaluru North","B
 const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","Anantapur","Annamayya","Bapatla","Chittoor","East Godavari","Eluru","Guntur","Kakinada","Konaseema","Krishna","Kurnool","Nandyal","NTR","Palnadu","Parvathipuram Manyam","Prakasam","Srikakulam","Sri Sathya Sai","Tirupati","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"],"Arunachal Pradesh":["Anjaw","Changlang","Dibang Valley","East Kameng","East Siang","Kamle","Kra Daadi","Kurung Kumey","Lepa Rada","Lohit","Longding","Lower Dibang Valley","Lower Siang","Lower Subansiri","Namsai","Pakke Kessang","Papum Pare","Shi Yomi","Siang","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"],"Assam":["Bajali","Baksa","Barpeta","Biswanath","Bongaigaon","Cachar","Charaideo","Chirang","Darrang","Dhemaji","Dhubri","Dibrugarh","Dima Hasao","Goalpara","Golaghat","Hailakandi","Hojai","Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari","Sivasagar","Sonitpur","South Salmara-Mankachar","Tamulpur","Tinsukia","Udalguri","West Karbi Anglong"],"Bihar":["Araria","Arwal","Aurangabad","Banka","Begusarai","Bhagalpur","Bhojpur","Buxar","Darbhanga","East Champaran","Gaya","Gopalganj","Jamui","Jehanabad","Kaimur","Katihar","Khagaria","Kishanganj","Lakhisarai","Madhepura","Madhubani","Munger","Muzaffarpur","Nalanda","Nawada","Patna","Purnia","Rohtas","Saharsa","Samastipur","Saran","Sheikhpura","Sheohar","Sitamarhi","Siwan","Supaul","Vaishali","West Champaran"],"Chhattisgarh":["Balod","Baloda Bazar","Balrampur","Bastar","Bemetara","Bijapur","Bilaspur","Dantewada","Dhamtari","Durg","Gariaband","Gaurela-Pendra-Marwahi","Janjgir-Champa","Jashpur","Kabirdham","Kanker","Kondagaon","Korba","Koriya","Mahasamund","Manendragarh","Mungeli","Narayanpur","Raigarh","Raipur","Rajnandgaon","Sakti","Sarangarh-Bilaigarh","Sukma","Surajpur","Surguja"],"Goa":["North Goa","South Goa"],"Gujarat":["Ahmedabad","Amreli","Anand","Aravalli","Banaskantha","Bharuch","Bhavnagar","Botad","Chhota Udaipur","Dahod","Dang","Devbhumi Dwarka","Gandhinagar","Gir Somnath","Jamnagar","Junagadh","Kheda","Kutch","Mahisagar","Mehsana","Morbi","Narmada","Navsari","Panchmahal","Patan","Porbandar","Rajkot","Sabarkantha","Surat","Surendranagar","Tapi","Vadodara","Valsad"],"Haryana":["Ambala","Bhiwani","Charkhi Dadri","Faridabad","Fatehabad","Gurugram","Hisar","Jhajjar","Jind","Kaithal","Karnal","Kurukshetra","Mahendragarh","Nuh","Palwal","Panchkula","Panipat","Rewari","Rohtak","Sirsa","Sonipat","Yamunanagar"],"Himachal Pradesh":["Bilaspur","Chamba","Hamirpur","Kangra","Kinnaur","Kullu","Lahaul and Spiti","Mandi","Shimla","Sirmaur","Solan","Una"],"Jharkhand":["Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribagh","Jamtara","Khunti","Koderma","Latehar","Lohardaga","Pakur","Palamu","Ramgarh","Ranchi","Sahebganj","Seraikela Kharsawan","Simdega","West Singhbhum"],"Karnataka":["Bagalkot","Ballari","Belagavi","Bengaluru Rural","Bengaluru Urban","Bidar","Chamarajanagar","Chikkaballapur","Chikkamagaluru","Chitradurga","Dakshina Kannada","Davangere","Dharwad","Gadag","Hassan","Haveri","Kalaburagi","Kodagu","Kolar","Koppal","Mandya","Mysuru","Raichur","Ramanagara","Shivamogga","Tumakuru","Udupi","Uttara Kannada","Vijayapura","Vijayanagara","Yadgir"],"Kerala":["Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"],"Madhya Pradesh":["Agar Malwa","Alirajpur","Anuppur","Ashoknagar","Balaghat","Barwani","Betul","Bhind","Bhopal","Burhanpur","Chhatarpur","Chhindwara","Damoh","Datia","Dewas","Dhar","Dindori","Guna","Gwalior","Harda","Hoshangabad","Indore","Jabalpur","Jhabua","Katni","Khandwa","Khargone","Mandla","Mandsaur","Morena","Narsinghpur","Neemuch","Niwari","Panna","Raisen","Rajgarh","Ratlam","Rewa","Sagar","Satna","Sehore","Seoni","Shahdol","Shajapur","Sheopur","Shivpuri","Sidhi","Singrauli","Tikamgarh","Ujjain","Umaria","Vidisha"],"Maharashtra":["Ahmednagar","Akola","Amravati","Aurangabad","Beed","Bhandara","Buldhana","Chandrapur","Dhule","Gadchiroli","Gondia","Hingoli","Jalgaon","Jalna","Kolhapur","Latur","Mumbai City","Mumbai Suburban","Nagpur","Nanded","Nandurbar","Nashik","Osmanabad","Palghar","Parbhani","Pune","Raigad","Ratnagiri","Sangli","Satara","Sindhudurg","Solapur","Thane","Wardha","Washim","Yavatmal"],"Manipur":["Bishnupur","Chandel","Churachandpur","Imphal East","Imphal West","Jiribam","Kakching","Kamjong","Kangpokpi","Noney","Pherzawl","Senapati","Tamenglong","Tengnoupal","Thoubal","Ukhrul"],"Meghalaya":["East Garo Hills","East Jaintia Hills","East Khasi Hills","North Garo Hills","Ri Bhoi","South Garo Hills","South West Garo Hills","South West Khasi Hills","West Garo Hills","West Jaintia Hills","West Khasi Hills"],"Mizoram":["Aizawl","Champhai","Hnahthial","Khawzawl","Kolasib","Lawngtlai","Lunglei","Mamit","Saiha","Saitual","Serchhip"],"Nagaland":["Dimapur","Kiphire","Kohima","Longleng","Mokokchung","Mon","Noklak","Peren","Phek","Tuensang","Wokha","Zunheboto"],"Odisha":["Angul","Balangir","Balasore","Bargarh","Bhadrak","Boudh","Cuttack","Deogarh","Dhenkanal","Gajapati","Ganjam","Jagatsinghpur","Jajpur","Jharsuguda","Kalahandi","Kandhamal","Kendrapara","Kendujhar","Khordha","Koraput","Malkangiri","Mayurbhanj","Nabarangpur","Nayagarh","Nuapada","Puri","Rayagada","Sambalpur","Subarnapur","Sundergarh"],"Punjab":["Amritsar","Barnala","Bathinda","Faridkot","Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur","Hoshiarpur","Jalandhar","Kapurthala","Ludhiana","Malerkotla","Mansa","Moga","Mohali","Muktsar","Pathankot","Patiala","Rupnagar","Sangrur","Shaheed Bhagat Singh Nagar","Tarn Taran"],"Rajasthan":["Ajmer","Alwar","Banswara","Baran","Barmer","Bharatpur","Bhilwara","Bikaner","Bundi","Chittorgarh","Churu","Dausa","Dholpur","Dungarpur","Hanumangarh","Jaipur","Jaisalmer","Jalore","Jhalawar","Jhunjhunu","Jodhpur","Karauli","Kota","Nagaur","Pali","Pratapgarh","Rajsamand","Sawai Madhopur","Sikar","Sirohi","Sri Ganganagar","Tonk","Udaipur"],"Sikkim":["East Sikkim","North Sikkim","Pakyong","Soreng","South Sikkim","West Sikkim"],"Tamil Nadu":["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kancheepuram","Kanyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar"],"Telangana":["Adilabad","Bhadradri Kothagudem","Hanamkonda","Hyderabad","Jagtial","Jangaon","Jayashankar Bhupalpally","Jogulamba Gadwal","Kamareddy","Karimnagar","Khammam","Kumuram Bheem","Mahabubabad","Mahabubnagar","Mancherial","Medak","Medchal-Malkajgiri","Mulugu","Nagarkurnool","Nalgonda","Narayanpet","Nirmal","Nizamabad","Peddapalli","Rajanna Sircilla","Rangareddy","Sangareddy","Siddipet","Suryapet","Vikarabad","Wanaparthy","Warangal","Yadadri Bhuvanagiri"],"Tripura":["Dhalai","Gomati","Khowai","North Tripura","Sepahijala","South Tripura","Unakoti","West Tripura"],"Uttar Pradesh":["Agra","Aligarh","Ambedkar Nagar","Amethi","Amroha","Auraiya","Ayodhya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bhadohi","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Farrukhabad","Fatehpur","Firozabad","Gautam Buddha Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kushinagar","Lakhimpur Kheri","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Prayagraj","Rae Bareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],"Uttarakhand":["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"],"West Bengal":["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"],"Andaman and Nicobar Islands":["Nicobars","North and Middle Andaman","South Andaman"],"Chandigarh (UT)":["Chandigarh"],"Dadra and Nagar Haveli and Daman and Diu":["Dadra and Nagar Haveli","Daman","Diu"],"Delhi":["Central Delhi","East Delhi","New Delhi","North Delhi","North East Delhi","North West Delhi","Shahdara","South Delhi","South East Delhi","South West Delhi","West Delhi"],"Jammu and Kashmir":["Anantnag","Bandipora","Baramulla","Budgam","Doda","Ganderbal","Jammu","Kathua","Kishtwar","Kulgam","Kupwara","Poonch","Pulwama","Rajouri","Ramban","Reasi","Samba","Shopian","Srinagar","Udhampur"],"Ladakh":["Kargil","Leh"],"Lakshadweep":["Lakshadweep"],"Puducherry":["Karaikal","Mahe","Puducherry","Yanam"]};
 
 /* STORAGE */
+/* ============================================================
+   HARDCODED GOOGLE APPS SCRIPT URL
+   Paste your deployed Web App URL below (between the quotes).
+   Leave blank ('') to run offline-only.
+============================================================ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxGUx1jumqt8etz4OteMkyCO__pZtlGoGpZjh4d2I1Z3gMwKTLwmvSH_rBG3RunrrHP/exec';
+
 const SK='ubksa_subs5',SS='ubksa_settings5',SA='ubksa_admauth5';
 const getSubs=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
 const saveSubs=d=>localStorage.setItem(SK,JSON.stringify(d));
-const getSettings=()=>{const def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:'',gasUrl:''};try{return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}'));}catch(e){return def;}};
+const getSettings=()=>{const def={username:'admin',password:'Admin@2024',cutoffDate:'2026-06-30',minYears:3,waTemplate:''};try{return Object.assign({},def,JSON.parse(localStorage.getItem(SS)||'{}'));}catch(e){return def;}};
 const saveSettings=s=>localStorage.setItem(SS,JSON.stringify(s));
 const isAdminIn=()=>sessionStorage.getItem(SA)==='true';
 const setAdminIn=v=>v?sessionStorage.setItem(SA,'true'):sessionStorage.removeItem(SA);
@@ -776,53 +782,85 @@ function showDashboard(){showPage('adminDashboard');refreshDash();}
 /* ============================================================
    OFFICER LOGIN
 ============================================================ */
-function doOfficerLogin(){
+async function doOfficerLogin(){
   const empId=document.getElementById('ol_empid').value.trim();
   const dob=document.getElementById('ol_dob').value;
   const wa=document.getElementById('ol_wa').value.trim();
   const errEl=document.getElementById('ol_err');
-  errEl.classList.add('hidden');errEl.innerHTML='';
+  const btn=document.querySelector('#officerLoginPage .btn-primary');
+  if(errEl){errEl.classList.add('hidden');errEl.innerHTML='';}
 
-  if(!/^\d{6}$/.test(empId)){
-    errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Employee ID must be exactly 6 digits.</div></div>';
-    errEl.classList.remove('hidden');return;
+  function showErr(msg){
+    if(!errEl)return;
+    errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>'+msg+'</div></div>';
+    errEl.classList.remove('hidden');
+    if(btn){btn.disabled=false;btn.textContent='&#128274; Proceed to Form';}
   }
-  if(!dob){
-    errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Please enter your Date of Birth.</div></div>';
-    errEl.classList.remove('hidden');return;
-  }
-  if(!/^\d{10}$/.test(wa)){
-    errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>WhatsApp number must be exactly 10 digits.</div></div>';
-    errEl.classList.remove('hidden');return;
-  }
+
+  if(!/^\d{6}$/.test(empId)){showErr('Employee ID must be exactly 6 digits.');return;}
+  if(!dob){showErr('Please enter your Date of Birth.');return;}
+  if(!/^\d{10}$/.test(wa)){showErr('WhatsApp number must be exactly 10 digits.');return;}
 
   currentOfficer={empId,dob,wa};
-  const subs=getSubs();
-  const existing=subs.find(s=>s.empId===empId);
+  if(btn){btn.disabled=true;btn.textContent='Checking...';}
+
+  // 1. Check localStorage first (same browser)
+  const localSubs=getSubs();
+  let existing=localSubs.find(s=>s.empId===empId);
+
+  // 2. If not in localStorage, try fetching from Google Sheets (cross-browser)
+  if(!existing && GAS_URL && GAS_URL!=='PASTE_YOUR_GAS_URL_HERE'){
+    try{
+      if(btn)btn.textContent='Loading your data...';
+      const resp=await fetch(GAS_URL+'?action=getOfficer&empId='+encodeURIComponent(empId));
+      if(resp.ok){
+        const result=await resp.json();
+        if(result.found && result.data){
+          // Cache in localStorage for future same-browser logins
+          existing=result.data;
+          const cached=localSubs.filter(s=>s.empId!==empId);
+          cached.push(existing);
+          saveSubs(cached);
+        }
+      }
+    }catch(err){
+      console.warn('GAS fetch failed, continuing offline:', err.message);
+    }
+  }
 
   if(existing){
-    // Verify DOB and WhatsApp
+    // Verify DOB hash and WhatsApp
     const storedHash=existing.dobHash;
     const inputHash=hashCred(empId,dob);
     if(storedHash!==inputHash||existing.whatsapp!==wa){
-      errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>The details entered do not match our records for this Employee ID. Please verify your Date of Birth and WhatsApp number.</div></div>';
-      errEl.classList.remove('hidden');return;
+      showErr('The details entered do not match our records for this Employee ID. Please verify your Date of Birth and WhatsApp number.');
+      return;
     }
     isEditMode=true;
-    initDropdowns();
-    populateForm(existing);
-    document.getElementById('editBanner').classList.remove('hidden');
-    document.getElementById('submitBtn').innerHTML='&#9998; Update My Details';
+    showPage('formPage');
+    requestAnimationFrame(()=>{
+      initDropdowns();
+      populateForm(existing);
+      const eb=document.getElementById('editBanner');
+      if(eb)eb.classList.remove('hidden');
+      const sb=document.getElementById('submitBtn');
+      if(sb)sb.innerHTML='&#9998; Update My Details';
+    });
   } else {
     isEditMode=false;
-    initDropdowns();
-    resetFormFields();
-    document.getElementById('f_empid').value=empId;
-    document.getElementById('f_wa').value=wa;
-    document.getElementById('editBanner').classList.add('hidden');
-    document.getElementById('submitBtn').innerHTML='&#10003; Submit Transfer Request';
+    showPage('formPage');
+    requestAnimationFrame(()=>{
+      initDropdowns();
+      resetFormFields();
+      const ei=document.getElementById('f_empid');if(ei)ei.value=empId;
+      const wi=document.getElementById('f_wa');if(wi)wi.value=wa;
+      const eb=document.getElementById('editBanner');
+      if(eb)eb.classList.add('hidden');
+      const sb=document.getElementById('submitBtn');
+      if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
+    });
   }
-  showPage('formPage');
+  if(btn){btn.disabled=false;btn.textContent='&#128274; Proceed to Form';}
 }
 
 /* ============================================================
@@ -1134,11 +1172,6 @@ async function doFinalSubmit(){
   const prevOn=document.getElementById('f_prevZoneToggle').checked;
   const dobHash=hashCred(currentOfficer.empId,currentOfficer.dob);
 
-  // Pre-compute predictable filename so admin can locate it in Drive
-  const DRIVE_FOLDER='https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh';
-  const ts=Date.now();
-  const predictedFileName=selFile?(currentOfficer.empId+'_'+ts+'_'+selFile.name):'';
-
   const sub={
     empId:currentOfficer.empId,
     dobHash:dobHash,
@@ -1158,22 +1191,21 @@ async function doFinalSubmit(){
     prevDoj:prevOn?gv('f_prevDoj'):'',
     prevDojFormatted:prevOn&&gv('f_prevDoj')?new Date(gv('f_prevDoj')).toLocaleDateString('en-IN'):'',
     transferCategory:cat,transferDetails:gv('f_details'),
-    supportingDoc:predictedFileName||'None',
-    supportingDocLink:predictedFileName?DRIVE_FOLDER:'',
-    driveFolderLink:DRIVE_FOLDER,
+    supportingDoc:selFile?selFile.name:'None',
+    supportingDocLink:'',
     requestedZone:gv('f_rZone'),
     reqRegion1:gr(1),reqRegion2:multi?gr(2):'',reqRegion3:multi?gr(3):'',
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  const settings=getSettings();
-  const gasUrl=(settings.gasUrl||'').trim();
-
-  if(gasUrl){
-    btn.textContent='Uploading & saving...';
+  // ── Send to Google Sheets + upload file to Drive ──────────────
+  const activeGasUrl=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  if(activeGasUrl){
+    btn.textContent=selFile?'Uploading document...':'Saving to sheets...';
     try{
       const payload={...sub};
-      delete payload.dobHash; // never send hash externally
+      delete payload.dobHash; // never send hash to external service
+
       if(selFile){
         const b64=await new Promise((res,rej)=>{
           const reader=new FileReader();
@@ -1183,27 +1215,29 @@ async function doFinalSubmit(){
         });
         payload.fileData=b64;
         payload.mimeType=selFile.type||'application/octet-stream';
-        payload.fileName=predictedFileName; // use the pre-computed name
+        payload.fileName=sub.empId+'_'+Date.now()+'_'+selFile.name;
       }
-      // mode:'no-cors' is required for Google Apps Script cross-origin POST
-      // It always works but returns an opaque response (we can't read it)
-      // The GAS uses the same predictedFileName so the file is findable in Drive
-      await fetch(gasUrl,{
+
+      // Regular fetch (not no-cors) so we can read the driveLink from the response
+      const resp=await fetch(activeGasUrl,{
         method:'POST',
-        mode:'no-cors',
         headers:{'Content-Type':'text/plain'},
         body:JSON.stringify(payload)
       });
+      if(resp.ok){
+        const result=await resp.json();
+        if(result.driveLink)sub.supportingDocLink=result.driveLink;
+        if(result.savedFileName)sub.supportingDoc=result.savedFileName;
+      }
     }catch(err){
-      console.warn('GAS sync error (data saved locally):', err.message);
+      console.warn('GAS sync failed (data saved locally):', err.message);
     }
   }
 
-  // Always save locally
+  // Always save locally (source of truth for same-browser, cache for cross-browser)
   let subs=getSubs();
   const idx=subs.findIndex(s=>s.empId===currentOfficer.empId);
-  if(idx>=0)subs[idx]=sub;
-  else subs.push(sub);
+  if(idx>=0)subs[idx]=sub; else subs.push(sub);
   saveSubs(subs);
 
   btn.disabled=false; btn.textContent='I Have Noted \u2014 Submit Now';
@@ -1372,7 +1406,7 @@ function renderTable(){
       '<td style="font-size:.78rem">'+(s.prevZone||'<span style="color:var(--muted)">None</span>')+'</td>'+
       '<td><span class="badge '+catBadge(s.transferCategory)+'">'+s.transferCategory+'</span></td>'+
       '<td>'+s.requestedZone+'</td>'+
-      '<td style="font-size:.77rem">'+( s.supportingDoc&&s.supportingDoc!=='None'?'<a href="'+(s.driveFolderLink||s.supportingDocLink||'https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh')+'" target="_blank" style="color:var(--green);font-weight:700" title="'+s.supportingDoc+'">&#128194; Drive</a>':'<span style="color:var(--muted)">None</span>')+'</td>'+
+      '<td style="font-size:.77rem">'+( s.supportingDocLink?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700" title="'+s.supportingDoc+'">&#128196; View Doc</a>':(s.supportingDoc&&s.supportingDoc!=='None'?'<span style="color:var(--muted);font-size:.76rem" title="'+s.supportingDoc+'">Pending link</span>':'<span style="color:var(--muted)">None</span>'))+'</td>'+
       '<td style="font-size:.77rem;white-space:nowrap">'+ts(s)+'</td>'+
       '<td style="white-space:nowrap">'+
         '<button class="btn btn-outline btn-sm" onclick="viewEntry(this.dataset.id)" data-id="'+eid+'" title="View">&#128065;</button> '+
@@ -1392,10 +1426,11 @@ function viewEntry(empId){
   const s=getSubs().find(x=>x.empId===empId);if(!s)return;
   let docCell='None uploaded';
   if(s.supportingDoc&&s.supportingDoc!=='None'){
-    const folderUrl=s.driveFolderLink||s.supportingDocLink||'https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh';
-    docCell='<span style="font-weight:600">'+s.supportingDoc+'</span><br>'+
-      '<a href="'+folderUrl+'" target="_blank" style="color:var(--blue);font-size:.8rem">&#128194; Open Drive Folder</a>'+
-      '<span style="font-size:.75rem;color:var(--muted);display:block;margin-top:2px">Search for the filename above in the Drive folder</span>';
+    if(s.supportingDocLink){
+      docCell='<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline">&#128196; '+s.supportingDoc+'</a>';
+    } else {
+      docCell='<span style="font-weight:600">'+s.supportingDoc+'</span> <span style="font-size:.75rem;color:var(--muted)">(sync pending or link unavailable)</span>';
+    }
   }
   const rows=[
     ['Name',s.name],['Employee ID',s.empId],['WhatsApp',s.whatsapp],
@@ -1527,23 +1562,18 @@ function loadSettings(){
   document.getElementById('s_cutoff').value=s.cutoffDate;
   document.getElementById('s_years').value=s.minYears||3;
   document.getElementById('s_watemplate').value=(s.waTemplate&&s.waTemplate.trim())?s.waTemplate:DEFAULT_WA_TEMPLATE;
-  const gu=document.getElementById('s_gasurl');if(gu)gu.value=s.gasUrl||'';
+  const gd=document.getElementById('gasUrlDisplay');if(gd)gd.textContent=' '+(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE'?GAS_URL:'(not set - paste your GAS URL in the HTML file)');
 }
-function saveGasUrl(){
-  const url=(document.getElementById('s_gasurl')||{}).value||'';
-  const msg=document.getElementById('gasUrlMsg');
-  const s=getSettings();s.gasUrl=url.trim();saveSettings(s);
-  if(msg){msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Apps Script URL saved. Future submissions will sync to Google Sheets and Drive.</div></div>';msg.classList.remove('hidden');setTimeout(()=>msg.classList.add('hidden'),4000);}
-}
+/* saveGasUrl removed - URL now hardcoded in GAS_URL constant */
 function testGasUrl(){
-  const url=(document.getElementById('s_gasurl')||{}).value||'';
+  const url=GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE'?GAS_URL:'';
   const msg=document.getElementById('gasUrlMsg');
-  if(!url){if(msg){msg.innerHTML='<div class="alert a-err"><span>&#10060;</span><div>Please enter a URL first.</div></div>';msg.classList.remove('hidden');}return;}
+  if(!url){if(msg){msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>GAS URL not set. Open the HTML file in a text editor and paste your Apps Script URL into the GAS_URL constant.</div></div>';msg.classList.remove('hidden');}return;}
   if(msg){msg.innerHTML='<div class="alert a-info"><span>&#8987;</span><div>Testing connection...</div></div>';msg.classList.remove('hidden');}
-  fetch(url,{method:'GET'})
+  fetch(url+'?action=ping')
     .then(r=>r.json())
-    .then(d=>{if(msg){msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Connection successful! Apps Script is active and responding.</div></div>';msg.classList.remove('hidden');}})
-    .catch(e=>{if(msg){msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>Could not reach the URL. Ensure the script is deployed as a Web App with Anyone access. Note: POST submissions may still work even if GET test fails.</div></div>';msg.classList.remove('hidden');}});
+    .then(()=>{if(msg){msg.innerHTML='<div class="alert a-succ"><span>&#10003;</span><div>Connected! Google Sheets and Drive sync is active.</div></div>';msg.classList.remove('hidden');}})
+    .catch(()=>{if(msg){msg.innerHTML='<div class="alert a-warn"><span>&#9888;</span><div>Could not reach the Apps Script. Check deployment settings (Execute as: Me, Who has access: Anyone). Submissions still save locally.</div></div>';msg.classList.remove('hidden');}});
 }
 function saveCredentials(){
   const u=document.getElementById('s_user').value.trim(),p=document.getElementById('s_pass').value,pc=document.getElementById('s_passc').value;
