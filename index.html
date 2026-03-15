@@ -840,7 +840,7 @@ async function doOfficerLogin(){
   // 2. If not found locally, fetch from Google Sheets (cross-browser/device)
   const activeGas=getGasUrl();
   if(!existing && activeGas){
-    setBtn('<span class="spin"></span>&nbsp; Loading your data...',true);
+    setBtn('<span class="spin"></span>&nbsp; Checking records...',true);
     try{
       var gasGetUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
       var gasResp=await fetch(gasGetUrl,{method:'GET',cache:'no-cache'});
@@ -852,13 +852,11 @@ async function doOfficerLogin(){
           updated.push(existing);
           saveSubs(updated);
         }
-        // gasResult.found===false means new user — continue to new entry flow
       } else {
         console.warn('GAS GET returned HTTP', gasResp.status);
       }
     }catch(gasErr){
-      console.warn('GAS GET failed:', gasErr.message,
-        '— Check: 1) GAS_URL is correct 2) Script deployed with Anyone access 3) SPREADSHEET_ID is set');
+      console.warn('GAS GET failed (proceeding offline):', gasErr.message);
     }
   }
 
@@ -1262,75 +1260,93 @@ async function doFinalSubmit(){
 // Sync a single entry to GAS. Can be called from background or manually.
 async function syncOneEntry(sub, fileObj){
   const activeGas=getGasUrl();
-  if(!activeGas)return;
-  try{
-    const payload=Object.assign({},sub);
-    delete payload.synced;
-    payload.dobHashForStorage=sub.dobStored||sub.dobHash||'';
+  if(!activeGas) return;
 
-    if(fileObj && fileObj.size){
-      const b64=await new Promise(function(res,rej){
+  // ── STEP 1: POST form data only (no file) — small, fast, reliable ──
+  try{
+    var dataPayload=Object.assign({},sub);
+    delete dataPayload.synced;
+    delete dataPayload.fileData; // never send file in data POST
+    dataPayload.dobHashForStorage=sub.dobStored||sub.dobHash||'';
+    dataPayload._type='dataOnly'; // tell GAS this is data only, no file
+
+    await fetch(activeGas,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(dataPayload)
+    });
+    console.log('Data POST sent for', sub.empId);
+
+    // Mark synced after data POST (file upload is bonus)
+    var subs=getSubs();
+    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
+    if(i>=0){subs[i].synced=true; saveSubs(subs);}
+
+  }catch(err){
+    console.warn('Data POST failed:', err.message);
+    var subs=getSubs();
+    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
+    if(i>=0){subs[i].synced=false; saveSubs(subs);}
+    return; // Don't attempt file upload if data POST failed
+  }
+
+  // ── STEP 2: Upload file separately (only if file provided) ─────────
+  if(fileObj && fileObj.size){
+    try{
+      var b64=await new Promise(function(res,rej){
         var r=new FileReader();
         r.onload=function(ev){res(ev.target.result.split(',')[1]);};
         r.onerror=function(){rej(new Error('read failed'));};
         r.readAsDataURL(fileObj);
       });
-      payload.fileData=b64;
-      payload.mimeType=fileObj.type||'application/octet-stream';
-      payload.fileName=sub.empId+'_'+Date.now()+'_'+fileObj.name;
-    }
 
-    // POST with no-cors — data ALWAYS reaches GAS, no CORS failure possible
-    await fetch(activeGas,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(payload)
-    });
+      var filePayload={
+        _type:'fileOnly',
+        empId:sub.empId,
+        fileData:b64,
+        mimeType:fileObj.type||'application/octet-stream',
+        fileName:sub.empId+'_'+Date.now()+'_'+fileObj.name,
+        dobHashForStorage:sub.dobStored||sub.dobHash||''
+      };
 
-    // Wait for GAS to finish writing, then GET to confirm + retrieve driveLink
-    await new Promise(function(r){setTimeout(r, fileObj&&fileObj.size ? 5000 : 2000);});
+      await fetch(activeGas,{
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(filePayload)
+      });
+      console.log('File POST sent for', sub.empId);
 
-    var confirmed=false;
-    try{
-      var getResp=await fetch(
-        activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),
-        {method:'GET',cache:'no-cache'}
-      );
-      if(getResp.ok){
-        var getResult=await getResp.json();
-        if(getResult.found && getResult.data){
-          confirmed=true;
-          var subs=getSubs();
-          var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-          if(i>=0){
-            subs[i].synced=true;
-            if(getResult.data.supportingDocLink)
-              subs[i].supportingDocLink=getResult.data.supportingDocLink;
-            if(getResult.data.supportingDoc && getResult.data.supportingDoc!=='None')
-              subs[i].supportingDoc=getResult.data.supportingDoc;
-            saveSubs(subs);
+      // Wait for GAS to process, then GET drive link
+      await new Promise(function(r){setTimeout(r,6000);});
+      try{
+        var gResp=await fetch(
+          activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),
+          {method:'GET',cache:'no-cache'}
+        );
+        if(gResp.ok){
+          var gData=await gResp.json();
+          if(gData.found && gData.data && gData.data.supportingDocLink){
+            var subs2=getSubs();
+            var j=subs2.findIndex(function(s){return s.empId===sub.empId;});
+            if(j>=0){
+              subs2[j].supportingDocLink=gData.data.supportingDocLink;
+              subs2[j].supportingDoc=gData.data.supportingDoc||subs2[j].supportingDoc;
+              saveSubs(subs2);
+            }
           }
         }
+      }catch(getErr){
+        console.warn('Drive link GET failed (non-critical):', getErr.message);
       }
-    }catch(getErr){
-      // GET failed but POST may still have worked — mark synced optimistically
-      console.warn('GET verification failed:', getErr.message);
+    }catch(fileErr){
+      console.warn('File upload failed (data already saved):', fileErr.message);
     }
+  }
 
-    if(!confirmed){
-      // POST likely worked but GET couldn't verify — still mark synced
-      var subs=getSubs();
-      var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-      if(i>=0){subs[i].synced=true; saveSubs(subs);}
-    }
-
-    console.log('Sync complete for', sub.empId, confirmed?'(verified)':'(unverified)');
-  }catch(err){
-    console.warn('Sync failed for', sub.empId, ':', err.message);
-    var subs=getSubs();
-    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(i>=0){subs[i].synced=false; saveSubs(subs);}
+  // Update table if admin is viewing
+  if(document.getElementById('adminDashboard') &&
+     !document.getElementById('adminDashboard').classList.contains('hidden')){
+    renderTable();
   }
 }
 
@@ -1862,6 +1878,7 @@ async function testGasPost(){
   res.style.color='#87CEEB';
   res.textContent='POST '+url+'\nSending test data to Google Sheet...\n(This sends a TEST row — you can delete it from the sheet)';
   var testData={
+    _type:'dataOnly',
     empId:'TEST_'+Date.now().toString().slice(-4),
     name:'Connection Test',whatsapp:'9999999999',
     officerCategory:'General Officer',officerScale:'Scale I Officer',
