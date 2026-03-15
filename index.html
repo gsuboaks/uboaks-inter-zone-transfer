@@ -768,7 +768,7 @@ const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","
    computer without any admin setup.
    Replace PASTE_YOUR_GAS_URL_HERE with your actual URL.
 ============================================================ */
-const GAS_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycbzFxVffOrPdCPtaw81kbXKAo5dwch_Ev9UFrq7K4JpYmO_Ug1VYwhzZH68yKqp4CvG9/exec';
+const GAS_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycbw1NWsOcm6r6m0WO7dQKU8xvJ7H4QgLy8g6LEUPLwEh1E3xPlonPS7T5S2DVEmbWb2w/exec';
 
 function getGasUrl(){
   // Hardcoded URL takes priority — works on every computer
@@ -868,10 +868,14 @@ async function doOfficerLogin(){
     // Verify: stored DOB must match entered DOB, and WhatsApp must match
     const storedDob=existing.dobStored||'';
     const dobOk = !storedDob || (storedDob===dob);
-    const waOk  = (existing.whatsapp===wa);
+    // Strip non-digits for comparison (handles sheet formatting like +91 prefix)
+    const cleanStored=(existing.whatsapp||'').replace(/\D/g,'').slice(-10);
+    const cleanEntered=wa.replace(/\D/g,'').slice(-10);
+    const waOk = (cleanStored===cleanEntered);
 
     if(!waOk){
-      showErr('The WhatsApp number entered does not match our records for Employee ID '+empId+'.');
+      showErr('The WhatsApp number entered does not match our records for Employee ID '+empId+
+        '. Entered: '+cleanEntered+', Stored: '+cleanStored+'(last 10 digits)');
       return;
     }
     if(!dobOk){
@@ -1336,7 +1340,7 @@ async function doFinalSubmit(){
     var fileSizeMB=(selFile.size/1024/1024).toFixed(1);
     var step2=addStep('&#9203;','Uploading document ('+fileSizeMB+' MB)...',false);
     setProgress(45,'Uploading Document','Your document ('+fileSizeMB+' MB) is being uploaded to Google Drive. Please wait — do not close this page.');
-    statusIcon.textContent='&#128228;';
+    statusIcon.innerHTML='&#128228;';
 
     try{
       // Read file as base64 with progress simulation
@@ -1378,7 +1382,7 @@ async function doFinalSubmit(){
       setProgress(90,'File Uploaded','Retrieving document link...');
 
       // Wait for GAS to process the file then GET the drive link
-      await new Promise(function(r){setTimeout(r,5000);});
+      await new Promise(function(r){setTimeout(r,8000);});
       try{
         var gResp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
         if(gResp.ok){
@@ -1404,7 +1408,7 @@ async function doFinalSubmit(){
 
   // ── Done ────────────────────────────────────────────────────
   setProgress(100,'All Done!','');
-  statusIcon.textContent='&#10003;&#65039;';
+  statusIcon.innerHTML='&#10003;&#65039;';
   statusTitle.textContent='Submission Complete!';
   statusMsg.textContent='Your Inter Zone Transfer request has been recorded successfully.';
   addStep('&#10003;','Submission complete — thank you!',true);
@@ -1732,7 +1736,57 @@ function switchTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   if(t==='entries')renderTable();if(t==='settings')loadSettings();
 }
-function refreshDash(){renderStats();renderTable();loadSettings();testGasConnection();}
+function refreshDash(){
+  renderStats();
+  renderTable();
+  loadSettings();
+  testGasConnection();
+  loadAllEntriesFromGas(); // load all entries from sheet on every admin login
+}
+
+// Load all entries from GAS and merge into localStorage
+async function loadAllEntriesFromGas(){
+  const activeGas=getGasUrl();
+  if(!activeGas)return;
+  const banner=document.getElementById('gasStatusBanner');
+
+  try{
+    // Request all entries (action=getAll)
+    var resp=await fetch(activeGas+'?action=getAll&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    if(!resp.ok)return;
+    var result=await resp.json();
+    if(!result.data || !Array.isArray(result.data) || !result.data.length)return;
+
+    // Merge: GAS data takes priority over local for existing empIds
+    // Local entries not in GAS (unsynced) are kept
+    var localSubs=getSubs();
+    var merged=[];
+    var gasEmpIds=result.data.map(function(s){return s.empId;});
+
+    // Add all GAS entries (they are authoritative)
+    merged=result.data.slice();
+
+    // Add local entries NOT in GAS (pending sync)
+    localSubs.forEach(function(ls){
+      if(!gasEmpIds.includes(ls.empId)){
+        merged.push(ls);
+      }
+    });
+
+    saveSubs(merged);
+    renderTable();
+    renderStats();
+
+    if(banner){
+      banner.style.cssText='background:var(--succbg);border:1px solid var(--succb);color:var(--green);padding:10px 14px;border-radius:6px;font-size:.83rem;margin-bottom:10px';
+      banner.innerHTML='&#10003; <strong>Synced '+result.data.length+' entries from Google Sheets.</strong>';
+      banner.classList.remove('hidden');
+      setTimeout(function(){banner.classList.add('hidden');}, 4000);
+    }
+  }catch(err){
+    console.warn('loadAllEntriesFromGas failed:', err.message);
+  }
+}
 
 function renderStats(){
   const subs=getSubs();
