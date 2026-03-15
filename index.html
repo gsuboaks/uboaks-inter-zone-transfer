@@ -1021,18 +1021,32 @@ function onDojChange(){
   const dojEl=document.getElementById('f_doj');
   const w=document.getElementById('dojWarn');
   if(!dojEl||!w){onPrevDojChange();return;}
-  const val=dojEl.value;
+  const val=dojEl.value; // 'YYYY-MM-DD'
   if(!val){w.classList.add('hidden');w.innerHTML='';onPrevDojChange();return;}
   const s=getSettings();
-  const cutoff=new Date(s.cutoffDate);
   const minYrs=parseInt(s.minYears)||3;
-  const threshold=new Date(cutoff);threshold.setFullYear(threshold.getFullYear()-minYrs);
-  const doj=new Date(val);
-  if(doj>threshold){
-    const d=cutoff.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});
-    w.innerHTML='<div class="alert a-warn"><span class="a-ico">&#9888;</span><div>You have not completed 3 years in the Zone as of '+d+'. You may not meet the cut-off criteria for General Repatriation unless you qualify under special grounds such as <strong>Spouse, Medical, Compassionate grounds, Death of Spouse within one year, or Retirement within one year</strong>. You may still submit.</div></div>';
+
+  // Parse as local date parts to avoid UTC offset issues
+  const [dy,dm,dd]=val.split('-').map(Number);
+
+  // Cutoff date parts
+  const cutoffStr=s.cutoffDate||'2026-06-30';
+  const [cy,cm,cd]=cutoffStr.split('-').map(Number);
+
+  // Threshold = cutoff minus minYrs years (same month/day)
+  const ty=cy-minYrs, tm=cm, td=cd;
+
+  // Compare: show warning if DOJ is AFTER threshold (i.e. > threshold date)
+  // Officer joined after threshold => has not completed N years by cutoff
+  const dojAfterThreshold=(dy>ty)||( dy===ty&&dm>tm)||(dy===ty&&dm===tm&&dd>td);
+
+  if(dojAfterThreshold){
+    const cutoffDisplay=String(cd).padStart(2,'0')+'/'+String(cm).padStart(2,'0')+'/'+cy;
+    w.innerHTML='<div class="alert a-warn"><span class="a-ico">&#9888;</span><div>You have not completed '+minYrs+' years in the Zone as of '+cutoffDisplay+'. You may not meet the cut-off criteria for General Repatriation unless you qualify under special grounds such as <strong>Spouse, Medical, Compassionate grounds, Death of Spouse within one year, or Retirement within one year</strong>. You may still submit.</div></div>';
     w.classList.remove('hidden');
-  }else{w.innerHTML='';w.classList.add('hidden');}
+  }else{
+    w.innerHTML='';w.classList.add('hidden');
+  }
   onPrevDojChange();
 }
 
@@ -1120,7 +1134,11 @@ async function doFinalSubmit(){
   const prevOn=document.getElementById('f_prevZoneToggle').checked;
   const dobHash=hashCred(currentOfficer.empId,currentOfficer.dob);
 
-  // Build submission object
+  // Pre-compute predictable filename so admin can locate it in Drive
+  const DRIVE_FOLDER='https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh';
+  const ts=Date.now();
+  const predictedFileName=selFile?(currentOfficer.empId+'_'+ts+'_'+selFile.name):'';
+
   const sub={
     empId:currentOfficer.empId,
     dobHash:dobHash,
@@ -1140,54 +1158,48 @@ async function doFinalSubmit(){
     prevDoj:prevOn?gv('f_prevDoj'):'',
     prevDojFormatted:prevOn&&gv('f_prevDoj')?new Date(gv('f_prevDoj')).toLocaleDateString('en-IN'):'',
     transferCategory:cat,transferDetails:gv('f_details'),
-    supportingDoc:selFile?selFile.name:'None',
-    supportingDocLink:'',
+    supportingDoc:predictedFileName||'None',
+    supportingDocLink:predictedFileName?DRIVE_FOLDER:'',
+    driveFolderLink:DRIVE_FOLDER,
     requestedZone:gv('f_rZone'),
     reqRegion1:gr(1),reqRegion2:multi?gr(2):'',reqRegion3:multi?gr(3):'',
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
   const settings=getSettings();
-  const gasUrl=settings.gasUrl||'';
+  const gasUrl=(settings.gasUrl||'').trim();
 
-  // ── Upload file to Google Drive + send data to Google Sheets ──
   if(gasUrl){
     btn.textContent='Uploading & saving...';
     try{
-      // Build payload - include file as base64 if present
       const payload={...sub};
+      delete payload.dobHash; // never send hash externally
       if(selFile){
         const b64=await new Promise((res,rej)=>{
           const reader=new FileReader();
-          reader.onload=e=>res(e.target.result.split(',')[1]);
+          reader.onload=ev=>res(ev.target.result.split(',')[1]);
           reader.onerror=()=>rej(new Error('File read failed'));
           reader.readAsDataURL(selFile);
         });
         payload.fileData=b64;
         payload.mimeType=selFile.type||'application/octet-stream';
-        payload.fileName=sub.empId+'_'+Date.now()+'_'+selFile.name;
+        payload.fileName=predictedFileName; // use the pre-computed name
       }
-      // Don't send dobHash to external services
-      delete payload.dobHash;
-
-      const resp=await fetch(gasUrl,{
+      // mode:'no-cors' is required for Google Apps Script cross-origin POST
+      // It always works but returns an opaque response (we can't read it)
+      // The GAS uses the same predictedFileName so the file is findable in Drive
+      await fetch(gasUrl,{
         method:'POST',
+        mode:'no-cors',
         headers:{'Content-Type':'text/plain'},
         body:JSON.stringify(payload)
       });
-      if(resp.ok){
-        const result=await resp.json();
-        if(result.driveLink){
-          sub.supportingDocLink=result.driveLink;
-          sub.supportingDoc=selFile?selFile.name:'None';
-        }
-      }
     }catch(err){
-      console.warn('GAS sync failed (data saved locally):', err.message);
+      console.warn('GAS sync error (data saved locally):', err.message);
     }
   }
 
-  // Always save locally regardless of GAS outcome
+  // Always save locally
   let subs=getSubs();
   const idx=subs.findIndex(s=>s.empId===currentOfficer.empId);
   if(idx>=0)subs[idx]=sub;
@@ -1360,7 +1372,7 @@ function renderTable(){
       '<td style="font-size:.78rem">'+(s.prevZone||'<span style="color:var(--muted)">None</span>')+'</td>'+
       '<td><span class="badge '+catBadge(s.transferCategory)+'">'+s.transferCategory+'</span></td>'+
       '<td>'+s.requestedZone+'</td>'+
-      '<td style="font-size:.77rem">'+( s.supportingDocLink?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--green);font-weight:700">&#128196; View</a>':'<span style="color:var(--muted);font-size:.76rem">'+( s.supportingDoc&&s.supportingDoc!=='None'?'No link':'None')+'</span>')+'</td>'+
+      '<td style="font-size:.77rem">'+( s.supportingDoc&&s.supportingDoc!=='None'?'<a href="'+(s.driveFolderLink||s.supportingDocLink||'https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh')+'" target="_blank" style="color:var(--green);font-weight:700" title="'+s.supportingDoc+'">&#128194; Drive</a>':'<span style="color:var(--muted)">None</span>')+'</td>'+
       '<td style="font-size:.77rem;white-space:nowrap">'+ts(s)+'</td>'+
       '<td style="white-space:nowrap">'+
         '<button class="btn btn-outline btn-sm" onclick="viewEntry(this.dataset.id)" data-id="'+eid+'" title="View">&#128065;</button> '+
@@ -1378,9 +1390,13 @@ function renderTable(){
 
 function viewEntry(empId){
   const s=getSubs().find(x=>x.empId===empId);if(!s)return;
-  const docCell=s.supportingDocLink
-    ?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline">&#128196; '+( s.supportingDoc||'View Document')+'</a>'
-    :(s.supportingDoc&&s.supportingDoc!=='None'?s.supportingDoc+' <span style="font-size:.75rem;color:var(--muted)">(link unavailable)</span>':'None uploaded');
+  let docCell='None uploaded';
+  if(s.supportingDoc&&s.supportingDoc!=='None'){
+    const folderUrl=s.driveFolderLink||s.supportingDocLink||'https://drive.google.com/drive/folders/1CFlMF4xuwhWpRlU-tdb4t6URqKBNFcKh';
+    docCell='<span style="font-weight:600">'+s.supportingDoc+'</span><br>'+
+      '<a href="'+folderUrl+'" target="_blank" style="color:var(--blue);font-size:.8rem">&#128194; Open Drive Folder</a>'+
+      '<span style="font-size:.75rem;color:var(--muted);display:block;margin-top:2px">Search for the filename above in the Drive folder</span>';
+  }
   const rows=[
     ['Name',s.name],['Employee ID',s.empId],['WhatsApp',s.whatsapp],
     ['Officer Category',s.officerCategory],['Officer Scale',s.officerScale],
