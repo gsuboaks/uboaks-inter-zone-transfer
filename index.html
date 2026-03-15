@@ -819,60 +819,95 @@ async function doOfficerLogin(){
   currentOfficer={empId,dob,wa};
   setBtn(btn,'<span class="spin"></span>&nbsp; Checking...',true);
 
-  // 1. Check localStorage first (same browser/device)
+  // 1. Check localStorage first (fastest, same browser)
   const localSubs=getSubs();
-  let existing=localSubs.find(s=>s.empId===empId);
+  let existing=localSubs.find(function(s){return s.empId===empId;});
 
-  // 2. If not in localStorage, fetch from Google Sheets (cross-browser/device)
+  // 2. If not in local storage, try fetching from GAS (cross-browser/device)
   const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
   if(!existing && activeGas){
     setBtn(btn,'<span class="spin"></span>&nbsp; Loading your data...',true);
     try{
-      const url=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
-      const resp=await fetch(url,{method:'GET',cache:'no-cache'});
+      var getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
+      var resp=await fetch(getUrl,{method:'GET',cache:'no-cache'});
       if(resp.ok){
-        const result=await resp.json();
+        var result=await resp.json();
         if(result.found && result.data){
           existing=result.data;
-          // Cache locally so next login on this browser is instant
-          const updated=localSubs.filter(s=>s.empId!==empId);
-          updated.push(existing);
-          saveSubs(updated);
         }
       }
     }catch(err){
-      console.warn('GAS fetch failed, proceeding offline:', err.message);
+      console.warn('GAS fetch failed, continuing offline:', err.message);
     }
   }
 
   if(existing){
-    const storedHash=existing.dobHash||'';
-    const inputHash=hashCred(empId,dob);
-    if(!storedHash||storedHash!==inputHash||existing.whatsapp!==wa){
-      showErr('The details entered do not match our records for this Employee ID. Please verify your Date of Birth and WhatsApp number.');
+    var storedHash=existing.dobHash||'';
+    var inputHash=hashCred(empId,dob);
+    var waMatch=(existing.whatsapp===wa);
+    var hashMatch=(storedHash===inputHash);
+
+    // Case 1: Hash present and matches + WA matches = full verified login
+    // Case 2: Hash absent (old entry without hash) + WA matches = accept, update hash
+    // Case 3: Anything else = reject
+    var verified=false;
+    if(waMatch && hashMatch){
+      verified=true;
+    } else if(waMatch && !storedHash){
+      // Old entry — no hash stored yet. Accept on WA match and update hash.
+      verified=true;
+      // Update existing with correct hash so future logins work
+      existing.dobHash=inputHash;
+      // Push updated hash to GAS in background
+      if(activeGas){
+        (function(){
+          var payload={empId:empId,dobHashForStorage:inputHash,_action:'updateHash'};
+          fetch(activeGas,{method:'POST',mode:'no-cors',
+            headers:{'Content-Type':'text/plain'},
+            body:JSON.stringify(payload)}).catch(function(){});
+        })();
+      }
+    } else if(!waMatch){
+      showErr('The WhatsApp number entered does not match our records for this Employee ID. Please check and try again.');
+      return;
+    } else {
+      // WA matches but hash doesn't — likely a different DOB was entered
+      showErr('The Date of Birth entered does not match our records for this Employee ID. Please check and try again.');
       return;
     }
-    isEditMode=true;
-    showPage('formPage');
-    requestAnimationFrame(()=>{
-      initDropdowns();
-      populateForm(existing);
-      const eb=document.getElementById('editBanner');if(eb)eb.classList.remove('hidden');
-      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#9998; Update My Details';
-    });
+
+    if(verified){
+      // Cache in localStorage (ensures fast login next time on this browser)
+      var updated=localSubs.filter(function(s){return s.empId!==empId;});
+      updated.push(existing);
+      saveSubs(updated);
+
+      isEditMode=true;
+      showPage('formPage');
+      requestAnimationFrame(function(){
+        initDropdowns();
+        populateForm(existing);
+        var eb=document.getElementById('editBanner');if(eb)eb.classList.remove('hidden');
+        var sb=document.getElementById('submitBtn');
+        if(sb)sb.innerHTML='&#9998; Update My Details';
+        setBtn(btn,'&#128274; Proceed to Form',false);
+      });
+    }
   } else {
+    // No record found anywhere — new entry
     isEditMode=false;
     showPage('formPage');
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(function(){
       initDropdowns();
       resetFormFields();
-      const ei=document.getElementById('f_empid');if(ei)ei.value=empId;
-      const wi=document.getElementById('f_wa');if(wi)wi.value=wa;
-      const eb=document.getElementById('editBanner');if(eb)eb.classList.add('hidden');
-      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
+      var ei=document.getElementById('f_empid');if(ei)ei.value=empId;
+      var wi=document.getElementById('f_wa');if(wi)wi.value=wa;
+      var eb=document.getElementById('editBanner');if(eb)eb.classList.add('hidden');
+      var sb=document.getElementById('submitBtn');
+      if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
+      setBtn(btn,'&#128274; Proceed to Form',false);
     });
   }
-  setBtn(btn,'&#128274; Proceed to Form',false);
 }
 
 /* ============================================================
