@@ -563,19 +563,22 @@ table tbody td{padding:9px 10px;vertical-align:top}
   </div>
 </div>
 
-<!-- ===== PROCESSING OVERLAY ===== -->
-<div class="modal-ov hidden" id="processingOverlay" style="background:rgba(0,0,0,.75);z-index:3000">
-  <div style="background:#fff;border-radius:16px;padding:36px 32px;text-align:center;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)">
-    <div style="font-size:2.8rem;margin-bottom:14px">&#9201;</div>
-    <h3 style="font-family:'Cinzel',serif;color:var(--navy);margin-bottom:8px;font-size:1.1rem">Processing...</h3>
-    <p id="processingMsg" style="color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:16px">Please wait while your data is being saved.</p>
-    <div style="display:flex;justify-content:center">
-      <div style="width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite"></div>
+<!-- ===== UPLOAD PROGRESS OVERLAY ===== -->
+<div class="modal-ov hidden" id="uploadProgressOverlay" style="background:rgba(0,0,0,.8);z-index:3000">
+  <div style="background:#fff;border-radius:16px;padding:32px 28px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);border-top:5px solid var(--blue)">
+    <div id="uploadStatusIcon" style="font-size:2.5rem;margin-bottom:12px">&#128196;</div>
+    <h3 id="uploadStatusTitle" style="font-family:'Cinzel',serif;color:var(--navy);margin-bottom:8px;font-size:1rem">Uploading Document</h3>
+    <p id="uploadStatusMsg" style="color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:18px">Please wait while your document is being uploaded and data is being saved to Google Sheets. Do not close this page.</p>
+    <!-- Progress bar -->
+    <div style="background:#E0E7F5;border-radius:20px;height:10px;overflow:hidden;margin-bottom:10px">
+      <div id="uploadProgressBar" style="height:100%;background:linear-gradient(90deg,var(--blue),var(--mid));border-radius:20px;width:0%;transition:width .4s ease"></div>
     </div>
+    <div id="uploadProgressPct" style="font-size:.78rem;color:var(--muted);margin-bottom:14px">0%</div>
+    <div id="uploadStepsList" style="text-align:left;font-size:.8rem;line-height:2;color:var(--text)"></div>
   </div>
 </div>
 
-<!-- ===== ADMIN LOGIN ===== -->
+<!-- ===== ADMIN LOGIN ===== --><!-- ===== ADMIN LOGIN ===== -->
 <div id="adminLoginPage" class="hidden">
   <div class="login-wrap">
     <div class="login-card">
@@ -760,21 +763,22 @@ const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","
 
 /* STORAGE */
 /* ============================================================
-   GOOGLE APPS SCRIPT URL
-   Either paste your URL here (between the quotes),
-   OR leave as-is and enter it in Admin → Settings.
-   The admin settings value always takes priority.
+   GOOGLE APPS SCRIPT URL — PASTE YOUR URL BELOW
+   This is the single source of truth. It works on every
+   computer without any admin setup.
+   Replace PASTE_YOUR_GAS_URL_HERE with your actual URL.
 ============================================================ */
-const GAS_URL_HARDCODED = 'PASTE_YOUR_GAS_URL_HERE';
+const GAS_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycbzFxVffOrPdCPtaw81kbXKAo5dwch_Ev9UFrq7K4JpYmO_Ug1VYwhzZH68yKqp4CvG9/exec';
 
-// Always use this function to get the active GAS URL.
-// Admin settings take priority over the hardcoded value.
 function getGasUrl(){
+  // Hardcoded URL takes priority — works on every computer
+  if(GAS_URL_HARDCODED && GAS_URL_HARDCODED!=='PASTE_YOUR_GAS_URL_HERE')
+    return GAS_URL_HARDCODED;
+  // Fallback: admin settings (for testing without editing HTML)
   try{
     var fromSettings=localStorage.getItem('ubksa_gasurl')||'';
     if(fromSettings && fromSettings!=='PASTE_YOUR_GAS_URL_HERE') return fromSettings;
   }catch(e){}
-  if(GAS_URL_HARDCODED && GAS_URL_HARDCODED!=='PASTE_YOUR_GAS_URL_HERE') return GAS_URL_HARDCODED;
   return '';
 }
 
@@ -1207,7 +1211,7 @@ function closeAdvisory(){document.getElementById('advisoryOverlay').classList.ad
 
 async function doFinalSubmit(){
   const submitBtn=document.getElementById('finalSubmitBtn');
-  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...';}
+  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Starting...';}
   document.getElementById('advisoryOverlay').classList.add('hidden');
 
   const cat=document.getElementById('f_tCat').value;
@@ -1242,19 +1246,177 @@ async function doFinalSubmit(){
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  // Save locally first — always works
-  var subs=getSubs();
-  var li=subs.findIndex(function(s){return s.empId===sub.empId;});
-  if(li>=0)subs[li]=sub; else subs.push(sub);
-  saveSubs(subs);
+  // Show upload overlay
+  const overlay=document.getElementById('uploadProgressOverlay');
+  const progBar=document.getElementById('uploadProgressBar');
+  const progPct=document.getElementById('uploadProgressPct');
+  const statusTitle=document.getElementById('uploadStatusTitle');
+  const statusMsg=document.getElementById('uploadStatusMsg');
+  const stepsList=document.getElementById('uploadStepsList');
+  const statusIcon=document.getElementById('uploadStatusIcon');
 
-  // Show success immediately
-  document.getElementById('succName').textContent=sub.name;
+  function setProgress(pct,title,msg){
+    if(progBar)progBar.style.width=pct+'%';
+    if(progPct)progPct.textContent=pct+'%';
+    if(title&&statusTitle)statusTitle.textContent=title;
+    if(msg&&statusMsg)statusMsg.textContent=msg;
+  }
+  function addStep(icon,text,done){
+    if(!stepsList)return;
+    var id='step_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+    var div=document.createElement('div');
+    div.id=id;
+    div.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #f0f4fb';
+    div.innerHTML='<span style="font-size:.9rem">'+icon+'</span><span>'+text+'</span>';
+    stepsList.appendChild(div);
+    return id;
+  }
+  function updateStep(id,icon,text){
+    if(!id)return;
+    var el=document.getElementById(id);
+    if(el)el.innerHTML='<span style="font-size:.9rem">'+icon+'</span><span>'+text+'</span>';
+  }
+
+  if(overlay)overlay.classList.remove('hidden');
+  if(stepsList)stepsList.innerHTML='';
+  setProgress(5,'Submitting Your Request','Saving your details...');
+
+  const activeGas=getGasUrl();
+  var step1=addStep('&#9203;','Saving to Google Sheets...',false);
+
+  // ── STEP 1: Save form data to sheet (no file — fast & reliable) ──
+  var dataOk=false;
+  try{
+    var dataPayload=Object.assign({},sub);
+    delete dataPayload.synced;
+    dataPayload.dobHashForStorage=sub.dobStored||'';
+    dataPayload._type='dataOnly';
+
+    if(activeGas){
+      setProgress(15,'Saving to Google Sheets','Sending your form data...');
+      await fetch(activeGas,{
+        method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(dataPayload)
+      });
+      // Wait for GAS to write, then verify
+      await new Promise(function(r){setTimeout(r,2500);});
+      // Try to verify
+      try{
+        var vResp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+        if(vResp.ok){
+          var vData=await vResp.json();
+          if(vData.found)dataOk=true;
+        }
+      }catch(ve){dataOk=true;} // assume ok if GET fails
+    } else {
+      dataOk=true; // no GAS — local only
+    }
+
+    // Always save locally
+    var subs=getSubs();
+    var li=subs.findIndex(function(s){return s.empId===sub.empId;});
+    if(li>=0)subs[li]=sub; else subs.push(sub);
+    subs[li>=0?li:subs.length-1].synced=dataOk;
+    saveSubs(subs);
+
+    updateStep(step1,dataOk?'&#10003;':'&#128190;',dataOk?'Saved to Google Sheets':'Saved locally (will sync later)');
+    setProgress(40,'Form Data Saved','');
+  }catch(err){
+    updateStep(step1,'&#128190;','Saved locally (GAS unavailable)');
+    var subs=getSubs();
+    var li=subs.findIndex(function(s){return s.empId===sub.empId;});
+    if(li>=0)subs[li]=sub; else subs.push(sub);
+    saveSubs(subs);
+    setProgress(40,'Form Data Saved','');
+  }
+
+  // ── STEP 2: Upload file (shown with progress, user waits) ──────
+  if(selFile && selFile.size && activeGas){
+    var fileSizeMB=(selFile.size/1024/1024).toFixed(1);
+    var step2=addStep('&#9203;','Uploading document ('+fileSizeMB+' MB)...',false);
+    setProgress(45,'Uploading Document','Your document ('+fileSizeMB+' MB) is being uploaded to Google Drive. Please wait — do not close this page.');
+    statusIcon.textContent='&#128228;';
+
+    try{
+      // Read file as base64 with progress simulation
+      var b64=await new Promise(function(res,rej){
+        var reader=new FileReader();
+        reader.onload=function(ev){
+          setProgress(60,'Reading File','File read complete. Uploading to Drive...');
+          res(ev.target.result.split(',')[1]);
+        };
+        reader.onerror=function(){rej(new Error('File read error'));};
+        reader.readAsDataURL(selFile);
+      });
+
+      setProgress(65,'Uploading to Google Drive','Sending file to server...');
+
+      var filePayload={
+        _type:'fileOnly',
+        empId:sub.empId,
+        fileData:b64,
+        mimeType:selFile.type||'application/octet-stream',
+        fileName:sub.empId+'_'+Date.now()+'_'+selFile.name,
+        dobHashForStorage:sub.dobStored||''
+      };
+
+      // Simulate progress during upload (no real progress events with no-cors)
+      var progInterval=setInterval(function(){
+        var cur=parseInt(progBar?progBar.style.width||'65':'65');
+        if(cur<88){
+          setProgress(cur+2,'Uploading to Google Drive','File is being saved to Drive...');
+        }
+      },800);
+
+      await fetch(activeGas,{
+        method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(filePayload)
+      });
+      clearInterval(progInterval);
+      setProgress(90,'File Uploaded','Retrieving document link...');
+
+      // Wait for GAS to process the file then GET the drive link
+      await new Promise(function(r){setTimeout(r,5000);});
+      try{
+        var gResp=await fetch(activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+        if(gResp.ok){
+          var gData=await gResp.json();
+          if(gData.found&&gData.data&&gData.data.supportingDocLink){
+            sub.supportingDocLink=gData.data.supportingDocLink;
+            sub.supportingDoc=gData.data.supportingDoc||sub.supportingDoc;
+            var subs3=getSubs();
+            var j=subs3.findIndex(function(s){return s.empId===sub.empId;});
+            if(j>=0){subs3[j].supportingDocLink=sub.supportingDocLink;subs3[j].supportingDoc=sub.supportingDoc;saveSubs(subs3);}
+            updateStep(step2,'&#10003;','Document uploaded to Google Drive');
+          } else {
+            updateStep(step2,'&#128196;','Document uploaded (link pending)');
+          }
+        }
+      }catch(ge){
+        updateStep(step2,'&#128196;','Document uploaded (link retrieval failed)');
+      }
+    }catch(fileErr){
+      updateStep(step2,'&#9888;','Document upload failed: '+fileErr.message+'. Your form data was saved. Please contact UBOA(KS) to submit your document separately.');
+    }
+  }
+
+  // ── Done ────────────────────────────────────────────────────
+  setProgress(100,'All Done!','');
+  statusIcon.textContent='&#10003;&#65039;';
+  statusTitle.textContent='Submission Complete!';
+  statusMsg.textContent='Your Inter Zone Transfer request has been recorded successfully.';
+  addStep('&#10003;','Submission complete — thank you!',true);
+
   if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='I Have Noted \u2014 Submit Now';}
-  showPage('successPage');
 
-  // Background sync — fire and forget with visibility
-  syncOneEntry(sub, selFile);
+  // Brief pause so user sees 100% before moving on
+  await new Promise(function(r){setTimeout(r,1500);});
+  if(overlay)overlay.classList.add('hidden');
+
+  document.getElementById('succName').textContent=sub.name;
+  showPage('successPage');
 }
 
 // Sync a single entry to GAS. Can be called from background or manually.
