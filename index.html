@@ -555,7 +555,19 @@ table tbody td{padding:9px 10px;vertical-align:top}
     </div>
     <div class="advisory-acts">
       <button class="btn btn-outline" onclick="closeAdvisory()">Go Back &amp; Check</button>
-      <button class="btn btn-primary" id="finalSubmitBtn" onclick="doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
+      <button class="btn btn-primary" id="finalSubmitBtn" onclick="this.disabled=true;this.innerHTML='<span class=\"spin\"></span>&nbsp; Processing...';doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROCESSING OVERLAY ===== -->
+<div class="modal-ov hidden" id="processingOverlay" style="background:rgba(0,0,0,.75);z-index:3000">
+  <div style="background:#fff;border-radius:16px;padding:36px 32px;text-align:center;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="font-size:2.8rem;margin-bottom:14px">&#9201;</div>
+    <h3 style="font-family:'Cinzel',serif;color:var(--navy);margin-bottom:8px;font-size:1.1rem">Processing...</h3>
+    <p id="processingMsg" style="color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:16px">Please wait while your data is being saved.</p>
+    <div style="display:flex;justify-content:center">
+      <div style="width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite"></div>
     </div>
   </div>
 </div>
@@ -744,7 +756,7 @@ const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","
    Paste your deployed Web App URL below (between the quotes).
    Leave blank ('') to run offline-only.
 ============================================================ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxGUx1jumqt8etz4OteMkyCO__pZtlGoGpZjh4d2I1Z3gMwKTLwmvSH_rBG3RunrrHP/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTYQRZDqZpbm_S2EkPr12l13PtpgrBgQHfh2BTjw2nHP3azPESxEaXSwsLAyRNoblx/exec';
 
 const SK='ubksa_subs5',SS='ubksa_settings5',SA='ubksa_admauth5';
 const getSubs=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
@@ -1167,10 +1179,13 @@ function handleSubmitClick(){
 function closeAdvisory(){document.getElementById('advisoryOverlay').classList.add('hidden');}
 
 async function doFinalSubmit(){
-  closeAdvisory();
-  const btn=document.getElementById('finalSubmitBtn');
-  function setBtn(txt,dis){if(btn){btn.disabled=dis;btn.innerHTML=txt;}}
-  setBtn('<span class="spin"></span>&nbsp; Saving...',true);
+  // Close advisory, show full-screen processing overlay
+  document.getElementById('advisoryOverlay').classList.add('hidden');
+  const overlay=document.getElementById('processingOverlay');
+  const msgEl=document.getElementById('processingMsg');
+  function setMsg(msg){if(msgEl)msgEl.textContent=msg;}
+  if(overlay)overlay.classList.remove('hidden');
+  setMsg('Saving your details...');
 
   const cat=document.getElementById('f_tCat').value;
   const multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
@@ -1202,22 +1217,22 @@ async function doFinalSubmit(){
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  // ── Step 1: Save locally immediately ──────────────────────────────────
+  // ── Step 1: Save locally immediately ──────────────────────────
   let subs=getSubs();
   const localIdx=subs.findIndex(s=>s.empId===currentOfficer.empId);
   if(localIdx>=0)subs[localIdx]=sub; else subs.push(sub);
   saveSubs(subs);
 
-  // ── Step 2: Send to GAS ───────────────────────────────────────────────
+  // ── Step 2: Send to GAS ────────────────────────────────────────
   const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
   if(activeGas){
     try{
       const payload={...sub};
-      delete payload.dobHash; // we send this separately so sheet can store it for cross-device login
-      payload.dobHashForStorage=sub.dobHash; // GAS stores this in sheet for cross-device verification
+      delete payload.dobHash;
+      payload.dobHashForStorage=sub.dobHash;
 
       if(selFile){
-        setBtn('<span class="spin"></span>&nbsp; Uploading document...',true);
+        setMsg('Uploading your document...');
         const b64=await new Promise((res,rej)=>{
           const reader=new FileReader();
           reader.onload=ev=>res(ev.target.result.split(',')[1]);
@@ -1227,13 +1242,12 @@ async function doFinalSubmit(){
         payload.fileData=b64;
         payload.mimeType=selFile.type||'application/octet-stream';
         payload.fileName=sub.empId+'_'+Date.now()+'_'+selFile.name;
-        setBtn('<span class="spin"></span>&nbsp; Sending to server...',true);
+        setMsg('Sending to server...');
       } else {
-        setBtn('<span class="spin"></span>&nbsp; Syncing to Google Sheets...',true);
+        setMsg('Syncing to Google Sheets...');
       }
 
-      // Use no-cors POST — always reaches GAS regardless of CORS headers
-      // This is the ONLY reliable way to POST to Google Apps Script
+      // no-cors POST — always reaches GAS regardless of CORS headers
       await fetch(activeGas,{
         method:'POST',
         mode:'no-cors',
@@ -1241,22 +1255,18 @@ async function doFinalSubmit(){
         body:JSON.stringify(payload)
       });
 
-      // ── Step 3: GET back to retrieve driveLink ────────────────────────
-      // GAS has stored the file and written the link to the sheet.
-      // We now read it back via GET which supports full CORS.
+      // ── Step 3: GET-back to retrieve driveLink ─────────────────
       if(selFile){
-        setBtn('<span class="spin"></span>&nbsp; Retrieving document link...',true);
-        // Wait briefly for GAS to finish writing
+        setMsg('Getting document link...');
         await new Promise(r=>setTimeout(r,3500));
         try{
           const getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now();
           const getResp=await fetch(getUrl,{method:'GET',cache:'no-cache'});
           if(getResp.ok){
             const getResult=await getResp.json();
-            if(getResult.found && getResult.data && getResult.data.supportingDocLink){
+            if(getResult.found&&getResult.data&&getResult.data.supportingDocLink){
               sub.supportingDocLink=getResult.data.supportingDocLink;
               sub.supportingDoc=getResult.data.supportingDoc||sub.supportingDoc;
-              // Update localStorage with the driveLink
               let subs2=getSubs();
               const idx2=subs2.findIndex(s=>s.empId===sub.empId);
               if(idx2>=0)subs2[idx2]=sub; else subs2.push(sub);
@@ -1264,15 +1274,15 @@ async function doFinalSubmit(){
             }
           }
         }catch(e2){
-          console.warn('Could not retrieve drive link (non-critical):', e2.message);
+          console.warn('Could not retrieve drive link:', e2.message);
         }
       }
     }catch(err){
-      console.warn('GAS sync error (data saved locally):', err.message);
+      console.warn('GAS sync error (saved locally):', err.message);
     }
   }
 
-  setBtn('I Have Noted \u2014 Submit Now',false);
+  if(overlay)overlay.classList.add('hidden');
   document.getElementById('succName').textContent=sub.name;
   showPage('successPage');
 }
