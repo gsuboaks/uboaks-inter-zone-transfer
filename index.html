@@ -555,7 +555,7 @@ table tbody td{padding:9px 10px;vertical-align:top}
     </div>
     <div class="advisory-acts">
       <button class="btn btn-outline" onclick="closeAdvisory()">Go Back &amp; Check</button>
-      <button class="btn btn-primary" id="finalSubmitBtn" onclick="this.disabled=true;this.innerHTML='<span class=\"spin\"></span>&nbsp; Processing...';doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
+      <button class="btn btn-primary" id="finalSubmitBtn" onclick="this.disabled=true;this.innerHTML='<span class=\"spin\"></span>&nbsp; Saving...';doFinalSubmit()">I Have Noted &mdash; Submit Now</button>
     </div>
   </div>
 </div>
@@ -1179,13 +1179,8 @@ function handleSubmitClick(){
 function closeAdvisory(){document.getElementById('advisoryOverlay').classList.add('hidden');}
 
 async function doFinalSubmit(){
-  // Close advisory, show full-screen processing overlay
+  // Hide advisory overlay
   document.getElementById('advisoryOverlay').classList.add('hidden');
-  const overlay=document.getElementById('processingOverlay');
-  const msgEl=document.getElementById('processingMsg');
-  function setMsg(msg){if(msgEl)msgEl.textContent=msg;}
-  if(overlay)overlay.classList.remove('hidden');
-  setMsg('Saving your details...');
 
   const cat=document.getElementById('f_tCat').value;
   const multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
@@ -1217,74 +1212,86 @@ async function doFinalSubmit(){
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  // ── Step 1: Save locally immediately ──────────────────────────
+  // ── STEP 1: Save locally immediately ────────────────────────────
   let subs=getSubs();
   const localIdx=subs.findIndex(s=>s.empId===currentOfficer.empId);
   if(localIdx>=0)subs[localIdx]=sub; else subs.push(sub);
   saveSubs(subs);
 
-  // ── Step 2: Send to GAS ────────────────────────────────────────
-  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
-  if(activeGas){
-    try{
-      const payload={...sub};
-      delete payload.dobHash;
-      payload.dobHashForStorage=sub.dobHash;
-
-      if(selFile){
-        setMsg('Uploading your document...');
-        const b64=await new Promise((res,rej)=>{
-          const reader=new FileReader();
-          reader.onload=ev=>res(ev.target.result.split(',')[1]);
-          reader.onerror=()=>rej(new Error('File read failed'));
-          reader.readAsDataURL(selFile);
-        });
-        payload.fileData=b64;
-        payload.mimeType=selFile.type||'application/octet-stream';
-        payload.fileName=sub.empId+'_'+Date.now()+'_'+selFile.name;
-        setMsg('Sending to server...');
-      } else {
-        setMsg('Syncing to Google Sheets...');
-      }
-
-      // no-cors POST — always reaches GAS regardless of CORS headers
-      await fetch(activeGas,{
-        method:'POST',
-        mode:'no-cors',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(payload)
-      });
-
-      // ── Step 3: GET-back to retrieve driveLink ─────────────────
-      if(selFile){
-        setMsg('Getting document link...');
-        await new Promise(r=>setTimeout(r,3500));
-        try{
-          const getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now();
-          const getResp=await fetch(getUrl,{method:'GET',cache:'no-cache'});
-          if(getResp.ok){
-            const getResult=await getResp.json();
-            if(getResult.found&&getResult.data&&getResult.data.supportingDocLink){
-              sub.supportingDocLink=getResult.data.supportingDocLink;
-              sub.supportingDoc=getResult.data.supportingDoc||sub.supportingDoc;
-              let subs2=getSubs();
-              const idx2=subs2.findIndex(s=>s.empId===sub.empId);
-              if(idx2>=0)subs2[idx2]=sub; else subs2.push(sub);
-              saveSubs(subs2);
-            }
-          }
-        }catch(e2){
-          console.warn('Could not retrieve drive link:', e2.message);
-        }
-      }
-    }catch(err){
-      console.warn('GAS sync error (saved locally):', err.message);
-    }
-  }
-
-  if(overlay)overlay.classList.add('hidden');
+  // ── STEP 2: Show success page immediately — user never waits for GAS ─
   document.getElementById('succName').textContent=sub.name;
   showPage('successPage');
+
+  // ── STEP 3: GAS sync runs in background after page shows ────────
+  // Capture selFile reference before it gets cleared
+  const fileToUpload=selFile;
+  const empIdForSync=currentOfficer.empId;
+  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+
+  if(activeGas){
+    // Helper: fetch with timeout so nothing ever hangs
+    function fetchWithTimeout(url,options,ms){
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),ms);
+      return fetch(url,{...options,signal:controller.signal})
+        .finally(()=>clearTimeout(timer));
+    }
+
+    // Run background sync without blocking UI
+    (async()=>{
+      try{
+        const payload={...sub};
+        delete payload.dobHash;
+        payload.dobHashForStorage=sub.dobHash;
+
+        if(fileToUpload){
+          const b64=await new Promise((res,rej)=>{
+            const reader=new FileReader();
+            reader.onload=ev=>res(ev.target.result.split(',')[1]);
+            reader.onerror=()=>rej(new Error('File read failed'));
+            reader.readAsDataURL(fileToUpload);
+          });
+          payload.fileData=b64;
+          payload.mimeType=fileToUpload.type||'application/octet-stream';
+          payload.fileName=empIdForSync+'_'+Date.now()+'_'+fileToUpload.name;
+        }
+
+        // POST with no-cors + 30s timeout
+        await fetchWithTimeout(activeGas,{
+          method:'POST',
+          mode:'no-cors',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify(payload)
+        },30000);
+
+        // If file was uploaded, GET-back after 4s to retrieve driveLink
+        if(fileToUpload){
+          await new Promise(r=>setTimeout(r,4000));
+          try{
+            const getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empIdForSync)+'&t='+Date.now();
+            const getResp=await fetchWithTimeout(getUrl,{method:'GET',cache:'no-cache'},10000);
+            if(getResp.ok){
+              const result=await getResp.json();
+              if(result.found&&result.data&&result.data.supportingDocLink){
+                // Update localStorage with driveLink — admin sees it next time they view
+                let subs3=getSubs();
+                const i3=subs3.findIndex(s=>s.empId===empIdForSync);
+                if(i3>=0){
+                  subs3[i3].supportingDocLink=result.data.supportingDocLink;
+                  subs3[i3].supportingDoc=result.data.supportingDoc||subs3[i3].supportingDoc;
+                  saveSubs(subs3);
+                }
+              }
+            }
+          }catch(e2){
+            console.warn('Drive link retrieval failed (non-critical):', e2.message);
+          }
+        }
+      }catch(err){
+        console.warn('Background GAS sync failed (data is safe in localStorage):', err.message);
+      }
+    })(); // immediately invoked — runs in background
+  }
 }
 
 /* ============================================================
