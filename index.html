@@ -783,56 +783,60 @@ function showDashboard(){showPage('adminDashboard');refreshDash();}
    OFFICER LOGIN
 ============================================================ */
 async function doOfficerLogin(){
-  const empId=document.getElementById('ol_empid').value.trim();
-  const dob=document.getElementById('ol_dob').value;
-  const wa=document.getElementById('ol_wa').value.trim();
+  const empId=(document.getElementById('ol_empid')||{value:''}).value.trim();
+  const dob=(document.getElementById('ol_dob')||{value:''}).value;
+  const wa=(document.getElementById('ol_wa')||{value:''}).value.trim();
   const errEl=document.getElementById('ol_err');
   const btn=document.querySelector('#officerLoginPage .btn-primary');
+
   if(errEl){errEl.classList.add('hidden');errEl.innerHTML='';}
 
   function showErr(msg){
-    if(!errEl)return;
-    errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>'+msg+'</div></div>';
-    errEl.classList.remove('hidden');
-    if(btn){btn.disabled=false;btn.textContent='&#128274; Proceed to Form';}
+    if(errEl){
+      errEl.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>'+msg+'</div></div>';
+      errEl.classList.remove('hidden');
+    }
+    setBtn(btn,'&#128274; Proceed to Form',false);
   }
+  function setBtn(b,txt,dis){if(b){b.disabled=dis;b.innerHTML=txt;}}
 
   if(!/^\d{6}$/.test(empId)){showErr('Employee ID must be exactly 6 digits.');return;}
   if(!dob){showErr('Please enter your Date of Birth.');return;}
   if(!/^\d{10}$/.test(wa)){showErr('WhatsApp number must be exactly 10 digits.');return;}
 
   currentOfficer={empId,dob,wa};
-  if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  setBtn(btn,'<span class="spin"></span>&nbsp; Checking...',true);
 
-  // 1. Check localStorage first (same browser)
+  // 1. Check localStorage first (same browser/device)
   const localSubs=getSubs();
   let existing=localSubs.find(s=>s.empId===empId);
 
-  // 2. If not in localStorage, try fetching from Google Sheets (cross-browser)
-  if(!existing && GAS_URL && GAS_URL!=='PASTE_YOUR_GAS_URL_HERE'){
+  // 2. If not in localStorage, fetch from Google Sheets (cross-browser/device)
+  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  if(!existing && activeGas){
+    setBtn(btn,'<span class="spin"></span>&nbsp; Loading your data...',true);
     try{
-      if(btn)btn.textContent='Loading your data...';
-      const resp=await fetch(GAS_URL+'?action=getOfficer&empId='+encodeURIComponent(empId));
+      const url=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
+      const resp=await fetch(url,{method:'GET',cache:'no-cache'});
       if(resp.ok){
         const result=await resp.json();
         if(result.found && result.data){
-          // Cache in localStorage for future same-browser logins
           existing=result.data;
-          const cached=localSubs.filter(s=>s.empId!==empId);
-          cached.push(existing);
-          saveSubs(cached);
+          // Cache locally so next login on this browser is instant
+          const updated=localSubs.filter(s=>s.empId!==empId);
+          updated.push(existing);
+          saveSubs(updated);
         }
       }
     }catch(err){
-      console.warn('GAS fetch failed, continuing offline:', err.message);
+      console.warn('GAS fetch failed, proceeding offline:', err.message);
     }
   }
 
   if(existing){
-    // Verify DOB hash and WhatsApp
-    const storedHash=existing.dobHash;
+    const storedHash=existing.dobHash||'';
     const inputHash=hashCred(empId,dob);
-    if(storedHash!==inputHash||existing.whatsapp!==wa){
+    if(!storedHash||storedHash!==inputHash||existing.whatsapp!==wa){
       showErr('The details entered do not match our records for this Employee ID. Please verify your Date of Birth and WhatsApp number.');
       return;
     }
@@ -841,10 +845,8 @@ async function doOfficerLogin(){
     requestAnimationFrame(()=>{
       initDropdowns();
       populateForm(existing);
-      const eb=document.getElementById('editBanner');
-      if(eb)eb.classList.remove('hidden');
-      const sb=document.getElementById('submitBtn');
-      if(sb)sb.innerHTML='&#9998; Update My Details';
+      const eb=document.getElementById('editBanner');if(eb)eb.classList.remove('hidden');
+      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#9998; Update My Details';
     });
   } else {
     isEditMode=false;
@@ -854,13 +856,11 @@ async function doOfficerLogin(){
       resetFormFields();
       const ei=document.getElementById('f_empid');if(ei)ei.value=empId;
       const wi=document.getElementById('f_wa');if(wi)wi.value=wa;
-      const eb=document.getElementById('editBanner');
-      if(eb)eb.classList.add('hidden');
-      const sb=document.getElementById('submitBtn');
-      if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
+      const eb=document.getElementById('editBanner');if(eb)eb.classList.add('hidden');
+      const sb=document.getElementById('submitBtn');if(sb)sb.innerHTML='&#10003; Submit Transfer Request';
     });
   }
-  if(btn){btn.disabled=false;btn.textContent='&#128274; Proceed to Form';}
+  setBtn(btn,'&#128274; Proceed to Form',false);
 }
 
 /* ============================================================
@@ -1156,14 +1156,21 @@ function validateForm(){
 ============================================================ */
 function handleSubmitClick(){
   if(!validateForm()){document.getElementById('formErrors').scrollIntoView({behavior:'smooth',block:'center'});return;}
-  document.getElementById('advisoryOverlay').classList.remove('hidden');
+  const sb=document.getElementById('submitBtn');
+  if(sb){sb.disabled=true;sb.innerHTML='<span class="spin"></span>&nbsp; Processing...';}
+  // slight delay so user sees feedback before advisory modal
+  setTimeout(()=>{
+    if(sb){sb.disabled=false;sb.innerHTML=isEditMode?'&#9998; Update My Details':'&#10003; Submit Transfer Request';}
+    document.getElementById('advisoryOverlay').classList.remove('hidden');
+  },400);
 }
 function closeAdvisory(){document.getElementById('advisoryOverlay').classList.add('hidden');}
 
 async function doFinalSubmit(){
   closeAdvisory();
   const btn=document.getElementById('finalSubmitBtn');
-  btn.disabled=true; btn.textContent='Saving...';
+  function setBtn(txt,dis){if(btn){btn.disabled=dis;btn.innerHTML=txt;}}
+  setBtn('<span class="spin"></span>&nbsp; Saving...',true);
 
   const cat=document.getElementById('f_tCat').value;
   const multi=cat==='Repatriation to Parent Zone'||cat==='Request to Other Zone';
@@ -1173,8 +1180,7 @@ async function doFinalSubmit(){
   const dobHash=hashCred(currentOfficer.empId,currentOfficer.dob);
 
   const sub={
-    empId:currentOfficer.empId,
-    dobHash:dobHash,
+    empId:currentOfficer.empId,dobHash:dobHash,
     timestamp:new Date().toISOString(),
     name:gv('f_name'),whatsapp:currentOfficer.wa,
     officerCategory:gv('f_cat'),officerScale:gv('f_scale'),
@@ -1186,27 +1192,32 @@ async function doFinalSubmit(){
     presentZone:gv('f_pZone'),presentRegion:gv('f_pRegion'),
     presentBranch:gv('f_branch'),dateJoiningZone:gv('f_doj'),
     dateWarning:document.getElementById('dojWarn').innerHTML.includes('alert')?'Yes':'No',
-    prevZone:prevOn?gv('f_prevZone'):'',
-    prevRegion:prevOn?gv('f_prevRegion'):'',
+    prevZone:prevOn?gv('f_prevZone'):'',prevRegion:prevOn?gv('f_prevRegion'):'',
     prevDoj:prevOn?gv('f_prevDoj'):'',
     prevDojFormatted:prevOn&&gv('f_prevDoj')?new Date(gv('f_prevDoj')).toLocaleDateString('en-IN'):'',
     transferCategory:cat,transferDetails:gv('f_details'),
-    supportingDoc:selFile?selFile.name:'None',
-    supportingDocLink:'',
+    supportingDoc:selFile?selFile.name:'None',supportingDocLink:'',
     requestedZone:gv('f_rZone'),
     reqRegion1:gr(1),reqRegion2:multi?gr(2):'',reqRegion3:multi?gr(3):'',
     domicileState:gv('f_state'),domicileDistrict:gv('f_dist'),pincode:gv('f_pin')
   };
 
-  // ── Send to Google Sheets + upload file to Drive ──────────────
-  const activeGasUrl=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
-  if(activeGasUrl){
-    btn.textContent=selFile?'Uploading document...':'Saving to sheets...';
+  // ── Step 1: Save locally immediately ──────────────────────────────────
+  let subs=getSubs();
+  const localIdx=subs.findIndex(s=>s.empId===currentOfficer.empId);
+  if(localIdx>=0)subs[localIdx]=sub; else subs.push(sub);
+  saveSubs(subs);
+
+  // ── Step 2: Send to GAS ───────────────────────────────────────────────
+  const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+  if(activeGas){
     try{
       const payload={...sub};
-      delete payload.dobHash; // never send hash to external service
+      delete payload.dobHash; // we send this separately so sheet can store it for cross-device login
+      payload.dobHashForStorage=sub.dobHash; // GAS stores this in sheet for cross-device verification
 
       if(selFile){
+        setBtn('<span class="spin"></span>&nbsp; Uploading document...',true);
         const b64=await new Promise((res,rej)=>{
           const reader=new FileReader();
           reader.onload=ev=>res(ev.target.result.split(',')[1]);
@@ -1216,31 +1227,52 @@ async function doFinalSubmit(){
         payload.fileData=b64;
         payload.mimeType=selFile.type||'application/octet-stream';
         payload.fileName=sub.empId+'_'+Date.now()+'_'+selFile.name;
+        setBtn('<span class="spin"></span>&nbsp; Sending to server...',true);
+      } else {
+        setBtn('<span class="spin"></span>&nbsp; Syncing to Google Sheets...',true);
       }
 
-      // Regular fetch (not no-cors) so we can read the driveLink from the response
-      const resp=await fetch(activeGasUrl,{
+      // Use no-cors POST — always reaches GAS regardless of CORS headers
+      // This is the ONLY reliable way to POST to Google Apps Script
+      await fetch(activeGas,{
         method:'POST',
+        mode:'no-cors',
         headers:{'Content-Type':'text/plain'},
         body:JSON.stringify(payload)
       });
-      if(resp.ok){
-        const result=await resp.json();
-        if(result.driveLink)sub.supportingDocLink=result.driveLink;
-        if(result.savedFileName)sub.supportingDoc=result.savedFileName;
+
+      // ── Step 3: GET back to retrieve driveLink ────────────────────────
+      // GAS has stored the file and written the link to the sheet.
+      // We now read it back via GET which supports full CORS.
+      if(selFile){
+        setBtn('<span class="spin"></span>&nbsp; Retrieving document link...',true);
+        // Wait briefly for GAS to finish writing
+        await new Promise(r=>setTimeout(r,3500));
+        try{
+          const getUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now();
+          const getResp=await fetch(getUrl,{method:'GET',cache:'no-cache'});
+          if(getResp.ok){
+            const getResult=await getResp.json();
+            if(getResult.found && getResult.data && getResult.data.supportingDocLink){
+              sub.supportingDocLink=getResult.data.supportingDocLink;
+              sub.supportingDoc=getResult.data.supportingDoc||sub.supportingDoc;
+              // Update localStorage with the driveLink
+              let subs2=getSubs();
+              const idx2=subs2.findIndex(s=>s.empId===sub.empId);
+              if(idx2>=0)subs2[idx2]=sub; else subs2.push(sub);
+              saveSubs(subs2);
+            }
+          }
+        }catch(e2){
+          console.warn('Could not retrieve drive link (non-critical):', e2.message);
+        }
       }
     }catch(err){
-      console.warn('GAS sync failed (data saved locally):', err.message);
+      console.warn('GAS sync error (data saved locally):', err.message);
     }
   }
 
-  // Always save locally (source of truth for same-browser, cache for cross-browser)
-  let subs=getSubs();
-  const idx=subs.findIndex(s=>s.empId===currentOfficer.empId);
-  if(idx>=0)subs[idx]=sub; else subs.push(sub);
-  saveSubs(subs);
-
-  btn.disabled=false; btn.textContent='I Have Noted \u2014 Submit Now';
+  setBtn('I Have Noted \u2014 Submit Now',false);
   document.getElementById('succName').textContent=sub.name;
   showPage('successPage');
 }
@@ -1324,9 +1356,24 @@ document.getElementById('transferForm').addEventListener('change',updateProgress
    ADMIN AUTH
 ============================================================ */
 function doLogin(){
-  const u=document.getElementById('au').value.trim(),p=document.getElementById('ap').value,s=getSettings();
-  if(u===s.username&&p===s.password){setAdminIn(true);document.getElementById('ap').value='';document.getElementById('loginErr').classList.add('hidden');showDashboard();}
-  else{const le=document.getElementById('loginErr');le.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Invalid User ID or Password.</div></div>';le.classList.remove('hidden');}
+  const u=(document.getElementById('au')||{value:''}).value.trim();
+  const p=(document.getElementById('ap')||{value:''}).value;
+  const s=getSettings();
+  const loginBtn=document.querySelector('#adminLoginPage .btn-primary');
+  if(loginBtn){loginBtn.disabled=true;loginBtn.innerHTML='<span class="spin"></span>&nbsp; Signing in...';}
+  setTimeout(()=>{
+    if(u===s.username&&p===s.password){
+      setAdminIn(true);
+      if(document.getElementById('ap'))document.getElementById('ap').value='';
+      const le=document.getElementById('loginErr');if(le)le.classList.add('hidden');
+      if(loginBtn){loginBtn.disabled=false;loginBtn.innerHTML='&#128274; Sign In';}
+      showDashboard();
+    } else {
+      const le=document.getElementById('loginErr');
+      if(le){le.innerHTML='<div class="alert a-err"><span class="a-ico">&#10060;</span><div>Invalid User ID or Password.</div></div>';le.classList.remove('hidden');}
+      if(loginBtn){loginBtn.disabled=false;loginBtn.innerHTML='&#128274; Sign In';}
+    }
+  },300);
 }
 function doLogout(){setAdminIn(false);showPage('adminLoginPage');}
 
@@ -1406,7 +1453,7 @@ function renderTable(){
       '<td style="font-size:.78rem">'+(s.prevZone||'<span style="color:var(--muted)">None</span>')+'</td>'+
       '<td><span class="badge '+catBadge(s.transferCategory)+'">'+s.transferCategory+'</span></td>'+
       '<td>'+s.requestedZone+'</td>'+
-      '<td style="font-size:.77rem">'+( s.supportingDocLink?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700" title="'+s.supportingDoc+'">&#128196; View Doc</a>':(s.supportingDoc&&s.supportingDoc!=='None'?'<span style="color:var(--muted);font-size:.76rem" title="'+s.supportingDoc+'">Pending link</span>':'<span style="color:var(--muted)">None</span>'))+'</td>'+
+      '<td style="font-size:.77rem">'+( s.supportingDocLink?'<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline" title="'+s.supportingDoc+'">&#128196; View</a>':( s.supportingDoc&&s.supportingDoc!=='None'?'<span style="color:var(--muted);font-size:.75rem">Uploaded<br>(no link yet)</span>':'<span style="color:var(--muted)">None</span>'))+'</td>'+
       '<td style="font-size:.77rem;white-space:nowrap">'+ts(s)+'</td>'+
       '<td style="white-space:nowrap">'+
         '<button class="btn btn-outline btn-sm" onclick="viewEntry(this.dataset.id)" data-id="'+eid+'" title="View">&#128065;</button> '+
@@ -1427,9 +1474,13 @@ function viewEntry(empId){
   let docCell='None uploaded';
   if(s.supportingDoc&&s.supportingDoc!=='None'){
     if(s.supportingDocLink){
-      docCell='<a href="'+s.supportingDocLink+'" target="_blank" style="color:var(--blue);font-weight:700;text-decoration:underline">&#128196; '+s.supportingDoc+'</a>';
+      docCell='<a href="'+s.supportingDocLink+'" target="_blank" '+
+               'style="color:var(--blue);font-weight:700;text-decoration:underline">'+
+               '&#128196; '+s.supportingDoc+'</a>';
     } else {
-      docCell='<span style="font-weight:600">'+s.supportingDoc+'</span> <span style="font-size:.75rem;color:var(--muted)">(sync pending or link unavailable)</span>';
+      docCell='<span style="font-weight:600">'+s.supportingDoc+'</span>'+
+              '<br><span style="font-size:.75rem;color:var(--muted)">'+
+              'Document uploaded — link will appear after GAS sync</span>';
     }
   }
   const rows=[
@@ -1441,22 +1492,17 @@ function viewEntry(empId){
     ['Present Branch/Office',s.presentBranch],
     ['Date of Joining Zone',s.dateJoiningZone?new Date(s.dateJoiningZone).toLocaleDateString('en-IN'):'-'],
     ['Date Warning Shown',s.dateWarning],
-    ['Previous Zone',s.prevZone||'Not applicable'],
-    ['Previous Zone Region',s.prevRegion||'N/A'],
+    ['Previous Zone',s.prevZone||'Not applicable'],['Previous Zone Region',s.prevRegion||'N/A'],
     ['Date of Joining Previous Zone',s.prevDojFormatted||'N/A'],
-    ['Transfer Category',s.transferCategory],
-    ['Transfer Details',s.transferDetails||'--'],
-    ['Supporting Document',docCell],
-    ['Requested Zone',s.requestedZone],
-    ['Req. Region Pref. 1',s.reqRegion1||'--'],
-    ['Req. Region Pref. 2',s.reqRegion2||'--'],
+    ['Transfer Category',s.transferCategory],['Transfer Details',s.transferDetails||'--'],
+    ['Supporting Document',docCell],['Requested Zone',s.requestedZone],
+    ['Req. Region Pref. 1',s.reqRegion1||'--'],['Req. Region Pref. 2',s.reqRegion2||'--'],
     ['Req. Region Pref. 3',s.reqRegion3||'--'],
-    ['Domicile State',s.domicileState],
-    ['Domicile District',s.domicileDistrict],
-    ['Pincode',s.pincode],
-    ['Last Updated',new Date(s.timestamp).toLocaleString('en-IN')]
+    ['Domicile State',s.domicileState],['Domicile District',s.domicileDistrict],
+    ['Pincode',s.pincode],['Last Updated',new Date(s.timestamp).toLocaleString('en-IN')]
   ];
-  document.getElementById('entryDetail').innerHTML='<table>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+(r[1]||'--')+'</td></tr>').join('')+'</table>';
+  document.getElementById('entryDetail').innerHTML=
+    '<table>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+(r[1]||'--')+'</td></tr>').join('')+'</table>';
   document.getElementById('entryMOv').classList.remove('hidden');
 }
 function closeEntryModal(){document.getElementById('entryMOv').classList.add('hidden');}
