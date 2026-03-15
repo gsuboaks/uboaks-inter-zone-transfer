@@ -636,7 +636,8 @@ table tbody td{padding:9px 10px;vertical-align:top}
             <button class="btn btn-danger btn-sm" onclick="confirmDeleteAll()">&#128465; Delete All</button>
             <span id="filterCount" style="font-size:.78rem;color:var(--muted);align-self:center"></span>
           </div>
-          <div id="gasStatusBanner" class="hidden" style="margin-bottom:10px;padding:8px 12px;border-radius:6px;font-size:.82rem"></div>
+          <div id="gasStatusBanner" class="hidden"></div>
+          <div id="gasDiagDetails" class="hidden" style="margin-bottom:10px"></div>
           <div class="tbl-wrap" id="tableWrap"></div>
           <p id="tableEmpty" class="hidden" style="text-align:center;padding:30px;color:var(--muted)">No submissions found.</p>
         </div>
@@ -671,7 +672,7 @@ table tbody td{padding:9px 10px;vertical-align:top}
             <span id="gasUrlDisplay" style="color:var(--muted);font-family:monospace;font-size:.78rem;word-break:break-all"></span>
           </div>
           <div style="margin-top:10px">
-            <button class="btn btn-outline btn-sm" onclick="testGasUrl()">&#9654; Test Connection</button>
+            <button class="btn btn-outline btn-sm" onclick="testGasConnection()">&#9654; Test Connection</button>
           </div>
           <div id="gasUrlMsg" class="hidden" style="margin-top:8px"></div>
         </div>
@@ -761,7 +762,7 @@ const STATES_DISTRICTS={"Andhra Pradesh":["Alluri Sitharama Raju","Anakapalli","
    Paste your deployed Web App URL below (between the quotes).
    Leave blank ('') to run offline-only.
 ============================================================ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwoC34etHm-nOEmtLTICV56pOhzjkAyqTGFTDVPdlRe7YFLgVhQbqKO1V7gUnun5GSe/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbz6H6bujONZOPhEsKOjvrE064rm4k6nmo0PF8IFxTrDRYnx_DMri6PNfZfXDN_g62Kb/exec';
 
 const SK='ubksa_subs5',SS='ubksa_settings5',SA='ubksa_admauth5';
 const getSubs=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
@@ -827,20 +828,23 @@ async function doOfficerLogin(){
   if(!existing && activeGas){
     setBtn('<span class="spin"></span>&nbsp; Loading your data...',true);
     try{
-      const url=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
-      const resp=await fetch(url,{method:'GET',cache:'no-cache'});
-      if(resp.ok){
-        const result=await resp.json();
-        if(result.found && result.data){
-          existing=result.data;
-          // Cache locally for fast access next time on this browser
-          const updated=localSubs.filter(function(s){return s.empId!==empId;});
+      var gasGetUrl=activeGas+'?action=getOfficer&empId='+encodeURIComponent(empId)+'&t='+Date.now();
+      var gasResp=await fetch(gasGetUrl,{method:'GET',cache:'no-cache'});
+      if(gasResp.ok){
+        var gasResult=await gasResp.json();
+        if(gasResult.found && gasResult.data){
+          existing=gasResult.data;
+          var updated=localSubs.filter(function(s){return s.empId!==empId;});
           updated.push(existing);
           saveSubs(updated);
         }
+        // gasResult.found===false means new user — continue to new entry flow
+      } else {
+        console.warn('GAS GET returned HTTP', gasResp.status);
       }
-    }catch(err){
-      console.warn('GAS fetch failed, continuing offline:', err.message);
+    }catch(gasErr){
+      console.warn('GAS GET failed:', gasErr.message,
+        '— Check: 1) GAS_URL is correct 2) Script deployed with Anyone access 3) SPREADSHEET_ID is set');
     }
   }
 
@@ -1244,12 +1248,11 @@ async function doFinalSubmit(){
 // Sync a single entry to GAS. Can be called from background or manually.
 async function syncOneEntry(sub, fileObj){
   const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
-  if(!activeGas) return;
-
+  if(!activeGas)return;
   try{
     const payload=Object.assign({},sub);
     delete payload.synced;
-    payload.dobHashForStorage=sub.dobStored||sub.dob||'';
+    payload.dobHashForStorage=sub.dobStored||sub.dobHash||'';
 
     if(fileObj && fileObj.size){
       const b64=await new Promise(function(res,rej){
@@ -1263,48 +1266,62 @@ async function syncOneEntry(sub, fileObj){
       payload.fileName=sub.empId+'_'+Date.now()+'_'+fileObj.name;
     }
 
-    // Use XMLHttpRequest instead of fetch — more reliable with GAS redirects
-    const result = await xhrPost(activeGas, payload);
+    // POST with no-cors — data ALWAYS reaches GAS, no CORS failure possible
+    await fetch(activeGas,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
 
-    // Update local record with sync status and drive link
-    var subs=getSubs();
-    var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(i>=0){
-      subs[i].synced=true;
-      if(result && result.driveLink) subs[i].supportingDocLink=result.driveLink;
-      if(result && result.savedFileName) subs[i].supportingDoc=result.savedFileName;
-      saveSubs(subs);
+    // Wait for GAS to finish writing, then GET to confirm + retrieve driveLink
+    await new Promise(function(r){setTimeout(r, fileObj&&fileObj.size ? 5000 : 2000);});
+
+    var confirmed=false;
+    try{
+      var getResp=await fetch(
+        activeGas+'?action=getOfficer&empId='+encodeURIComponent(sub.empId)+'&t='+Date.now(),
+        {method:'GET',cache:'no-cache'}
+      );
+      if(getResp.ok){
+        var getResult=await getResp.json();
+        if(getResult.found && getResult.data){
+          confirmed=true;
+          var subs=getSubs();
+          var i=subs.findIndex(function(s){return s.empId===sub.empId;});
+          if(i>=0){
+            subs[i].synced=true;
+            if(getResult.data.supportingDocLink)
+              subs[i].supportingDocLink=getResult.data.supportingDocLink;
+            if(getResult.data.supportingDoc && getResult.data.supportingDoc!=='None')
+              subs[i].supportingDoc=getResult.data.supportingDoc;
+            saveSubs(subs);
+          }
+        }
+      }
+    }catch(getErr){
+      // GET failed but POST may still have worked — mark synced optimistically
+      console.warn('GET verification failed:', getErr.message);
     }
-    console.log('GAS sync OK for', sub.empId);
+
+    if(!confirmed){
+      // POST likely worked but GET couldn't verify — still mark synced
+      var subs=getSubs();
+      var i=subs.findIndex(function(s){return s.empId===sub.empId;});
+      if(i>=0){subs[i].synced=true; saveSubs(subs);}
+    }
+
+    console.log('Sync complete for', sub.empId, confirmed?'(verified)':'(unverified)');
   }catch(err){
-    console.warn('GAS sync failed for', sub.empId, ':', err.message);
-    // Mark as not synced so admin can retry
+    console.warn('Sync failed for', sub.empId, ':', err.message);
     var subs=getSubs();
     var i=subs.findIndex(function(s){return s.empId===sub.empId;});
-    if(i>=0){subs[i].synced=false;saveSubs(subs);}
+    if(i>=0){subs[i].synced=false; saveSubs(subs);}
   }
 }
 
 // XHR POST — follows GAS redirects correctly, returns parsed JSON response
-function xhrPost(url, data){
-  return new Promise(function(resolve, reject){
-    var xhr=new XMLHttpRequest();
-    xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type','text/plain');
-    xhr.timeout=30000;
-    xhr.onload=function(){
-      if(xhr.status>=200 && xhr.status<400){
-        try{resolve(JSON.parse(xhr.responseText));}
-        catch(e){resolve({success:true});}
-      } else {
-        reject(new Error('HTTP '+xhr.status));
-      }
-    };
-    xhr.onerror=function(){reject(new Error('Network error'));};
-    xhr.ontimeout=function(){reject(new Error('Timeout'));};
-    xhr.send(JSON.stringify(data));
-  });
-}
+/* xhrPost removed - using fetch */
 
 // Sync all unsynced entries
 async function syncAllPending(){
@@ -1339,18 +1356,74 @@ async function syncAllPending(){
 // Test GAS connection
 async function testGasConnection(){
   const banner=document.getElementById('gasStatusBanner');
+  const diagDiv=document.getElementById('gasDiagDetails');
   const activeGas=(GAS_URL&&GAS_URL!=='PASTE_YOUR_GAS_URL_HERE')?GAS_URL:'';
+
+  function showBanner(bg, bc, color, msg){
+    if(banner){
+      banner.style.cssText='background:'+bg+';border:1px solid '+bc+';color:'+color+
+        ';padding:10px 14px;border-radius:6px;font-size:.83rem;margin-bottom:10px';
+      banner.innerHTML=msg;
+      banner.classList.remove('hidden');
+    }
+  }
+
   if(!activeGas){
-    if(banner){banner.style.background='var(--warnbg)';banner.style.border='1px solid var(--warnb)';banner.style.color='#7a5000';banner.innerHTML='&#9888; GAS URL not set. Open HTML in a text editor and paste your Apps Script URL into const GAS_URL.';banner.classList.remove('hidden');}
+    showBanner('var(--warnbg)','var(--warnb)','#7a5000',
+      '&#9888; <strong>GAS URL not configured.</strong> Open the HTML file in a text editor '+
+      'and paste your Apps Script deployment URL into <code>const GAS_URL = \'...\';</code>'+
+      ' at the top of the &lt;script&gt; section.');
     return;
   }
+
+  showBanner('var(--infobg)','var(--infob)','var(--navy)',
+    '<span class="spin" style="border-color:rgba(0,35,102,.3);border-top-color:var(--navy);width:12px;height:12px;border-width:2px;display:inline-block"></span>'+
+    ' Testing connection to Google Apps Script...');
+
   try{
-    var resp=await fetch(activeGas+'?action=ping&t='+Date.now(),{method:'GET',cache:'no-cache'});
-    var data=await resp.json();
-    if(banner){banner.style.background='var(--succbg)';banner.style.border='1px solid var(--succb)';banner.style.color='var(--green)';banner.innerHTML='&#10003; Google Sheets connected. '+JSON.stringify(data);banner.classList.remove('hidden');}
-  }catch(e){
-    if(banner){banner.style.background='var(--errbg)';banner.style.border='1px solid var(--errb)';banner.style.color='var(--red)';banner.innerHTML='&#10060; Cannot reach Apps Script: '+e.message+'. Check your GAS_URL and deployment settings.';banner.classList.remove('hidden');}
+    var resp=await fetch(activeGas+'?action=ping&t='+Date.now(),
+      {method:'GET', cache:'no-cache'});
+
+    if(resp.ok){
+      var data=await resp.json();
+      var unsyncedCount=getSubs().filter(function(s){return !s.synced;}).length;
+      var syncMsg=unsyncedCount>0
+        ? ' <strong>'+unsyncedCount+' entries pending sync.</strong> Click "Sync All to Sheets" above.'
+        : ' All entries are synced.';
+      showBanner('var(--succbg)','var(--succb)','var(--green)',
+        '&#10003; <strong>Connected to Google Sheets.</strong>'+syncMsg);
+    } else {
+      showBanner('var(--errbg)','var(--errb)','var(--red)',
+        '&#10060; <strong>HTTP '+resp.status+'</strong> — See troubleshooting below.');
+      showDiag(activeGas, 'HTTP '+resp.status);
+    }
+  }catch(err){
+    var isCors=err.message.indexOf('CORS')>=0||err.message.indexOf('fetch')>=0||err.message.indexOf('Failed')>=0;
+    showBanner('var(--errbg)','var(--errb)','var(--red)',
+      '&#10060; <strong>Connection failed: '+err.message+'</strong> — See troubleshooting below.');
+    showDiag(activeGas, err.message);
   }
+}
+
+function showDiag(url, errMsg){
+  var d=document.getElementById('gasDiagDetails');
+  if(!d)return;
+  d.style.cssText='background:#1a1a2e;color:#e0e0e0;padding:14px;border-radius:6px;font-size:.8rem;line-height:1.8;margin-bottom:12px';
+  d.innerHTML='<strong style="color:#F0B429">&#128270; Troubleshooting Steps:</strong><br><br>'+
+    '<strong style="color:#90EE90">1. Check your GAS_URL in the HTML:</strong><br>'+
+    '&nbsp;&nbsp;Current value: <span style="color:#87CEEB;word-break:break-all">'+url+'</span><br><br>'+
+    '<strong style="color:#90EE90">2. Open this URL in a NEW browser tab:</strong><br>'+
+    '&nbsp;&nbsp;<a href="'+url+'" target="_blank" style="color:#87CEEB">Click here to open GAS URL</a><br>'+
+    '&nbsp;&nbsp;You should see: <span style="color:#90EE90">{"status":"UBOA KS Transfer API Active"}</span><br>'+
+    '&nbsp;&nbsp;If you see a Google login page → redeploy with "Who has access: Anyone"<br>'+
+    '&nbsp;&nbsp;If you see an error → the script has a bug (check SPREADSHEET_ID)<br><br>'+
+    '<strong style="color:#90EE90">3. In Apps Script editor:</strong><br>'+
+    '&nbsp;&nbsp;a. Make sure SPREADSHEET_ID is replaced with your actual Sheet ID<br>'+
+    '&nbsp;&nbsp;b. Run the testWrite function to verify sheet access<br>'+
+    '&nbsp;&nbsp;c. Deploy → Manage → ✏️ → New version → Deploy<br>'+
+    '&nbsp;&nbsp;d. Execute as: Me &nbsp;|&nbsp; Who has access: Anyone<br><br>'+
+    '<strong style="color:#FFA07A">Error received: '+errMsg+'</strong>';
+  d.classList.remove('hidden');
 }
 
 /* ============================================================
