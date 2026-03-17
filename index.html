@@ -143,6 +143,25 @@ tr:hover td{background:var(--blue-light)}
 .advisory-box ul{padding-left:18px;color:#6b21a8;font-size:13.5px;line-height:1.8}
 .section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:4px 0 16px}
 @media(max-width:440px){.card{padding:14px 12px}.login-box{padding:26px 16px 20px}.form-row{flex-direction:column;gap:0}}
+
+/* ── READ MORE ── */
+.cell-detail{max-width:180px}
+.detail-short{display:block;font-size:11px;line-height:1.5;color:var(--text)}
+.detail-full{display:none;font-size:11px;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}
+.detail-toggle{background:none;border:none;cursor:pointer;color:var(--blue-mid);font-size:10.5px;font-weight:600;padding:2px 0;text-decoration:underline;display:block;margin-top:2px}
+.row-expanded .detail-short{display:none}
+.row-expanded .detail-full{display:block}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:14px 0 4px}
+.pg-btn{min-width:34px;height:34px;padding:0 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--text-mid);font-size:13px;font-family:'Poppins',sans-serif;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.pg-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.pg-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-info{font-size:12px;color:var(--text-light);padding:0 6px}
+.pg-jump{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-mid)}
+.pg-jump input{width:52px;padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;text-align:center}
+
 </style>
 </head>
 <body>
@@ -559,6 +578,15 @@ tr:hover td{background:var(--blue-light)}
         </table>
       </div>
       <p id="no-entries-msg" class="text-sm text-light text-center mt-3 hidden">No entries yet.</p>
+      <div id="pagination-wrap" class="hidden">
+        <div class="pagination" id="pagination-controls"></div>
+        <div class="pg-jump">
+          <span>Go to page</span>
+          <input type="number" id="pg-jump-input" min="1" value="1" onkeydown="if(event.key==='Enter')jumpToPage()">
+          <button class="pg-btn" onclick="jumpToPage()">Go</button>
+          <span class="pg-info" id="pg-info-text"></span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1140,27 +1168,29 @@ async function fetchFromGoogleSheets(){
   } catch(e){ console.warn('Sheets fetch failed:',e); return null; }
 }
 
+// ── Pagination state ──
+let _allEntries   = [];
+let _currentPage  = 1;
+const PAGE_SIZE   = 20;
+
 async function renderAdminDash(){
   const cfg=getAdminCfg();
   document.getElementById('a-cutoff').value=cfg.cutoffDate;
-  const tbody=document.getElementById('entries-tbody');
-  const noMsg=document.getElementById('no-entries-msg');
+  const tbody  =document.getElementById('entries-tbody');
+  const noMsg  =document.getElementById('no-entries-msg');
   const countEl=document.getElementById('entries-count');
 
-  // Show loading
   tbody.innerHTML='<tr><td colspan="30" style="text-align:center;padding:20px;color:var(--blue)">⏳ Loading entries...</td></tr>';
   noMsg.classList.add('hidden');
+  document.getElementById('pagination-wrap').classList.add('hidden');
 
-  // Try Google Sheets first, fall back to localStorage
-  let entries=null;
-  let source='local';
+  let entries=null, source='local';
   if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
     entries=await fetchFromGoogleSheets();
     if(entries) source='sheets';
   }
   if(!entries) entries=getEntries();
 
-  // Update source indicator
   const srcBadge=document.getElementById('data-source-badge');
   if(srcBadge) srcBadge.textContent=source==='sheets'?'📡 Live from Google Sheets':'💾 Local data (Google Sheets not configured)';
 
@@ -1168,30 +1198,62 @@ async function renderAdminDash(){
   const today=new Date().toDateString();
   document.getElementById('stat-today').textContent=entries.filter(e=>{
     const d=e.submittedAt||e['Timestamp']||'';
-    return d && new Date(d).toDateString()===today;
+    return d&&new Date(d).toDateString()===today;
   }).length;
   countEl.textContent=entries.length;
 
-  tbody.innerHTML='';
-  if(!entries.length){noMsg.classList.remove('hidden');return}
+  if(!entries.length){tbody.innerHTML='';noMsg.classList.remove('hidden');return}
   noMsg.classList.add('hidden');
 
-  entries.forEach((e,i)=>{
-    // Support both JS object format and Sheets row format
-    const g=k=>e[k]||'';
-    const d=g('submittedAt')||g('Timestamp')||'';
+  _allEntries  = entries;
+  _currentPage = 1;
+  renderPage(1);
+}
+
+function renderPage(page){
+  const total     = _allEntries.length;
+  const totalPages= Math.ceil(total/PAGE_SIZE);
+  page            = Math.max(1, Math.min(page, totalPages));
+  _currentPage    = page;
+
+  const start = (page-1)*PAGE_SIZE;
+  const slice = _allEntries.slice(start, start+PAGE_SIZE);
+
+  const tbody = document.getElementById('entries-tbody');
+  tbody.innerHTML='';
+
+  slice.forEach((e, localIdx)=>{
+    const globalIdx = start + localIdx;
+    const g = k=>e[k]||'';
+    const d = g('submittedAt')||g('Timestamp')||'';
     let ds='-';
     if(d){try{const dt=new Date(d);ds=`${dt.getDate()}/${dt.getMonth()+1}/${dt.getFullYear()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,'0')}`;}catch(ex){ds=d;}}
-    const tr=document.createElement('tr');
-    const f=v=>v?`<td style="font-size:11px;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${v}">${v}</td>`:`<td style="font-size:11px;color:#94a3b8">-</td>`;
-    // Document link cell
-    const docUrl=g('fileUploadedUrl')||g('Document Link')||'';
-    const docName=g('fileName')||g('Supporting Document')||'';
-    const docCell=docUrl
-      ? `<td style="font-size:11px"><a href="${docUrl}" target="_blank" style="color:var(--blue-mid);text-decoration:underline" title="View document">📄 View</a></td>`
+
+    const tr = document.createElement('tr');
+    const f  = v=>v
+      ? `<td style="font-size:11px;white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis" title="${String(v).replace(/"/g,'&quot;')}">${v}</td>`
+      : `<td style="font-size:11px;color:#94a3b8">-</td>`;
+
+    // Read-more cell for Transfer Details
+    const det      = g('transferDetails')||g('Transfer Details')||'';
+    const LIMIT    = 60;
+    const detCell  = det.length > LIMIT
+      ? `<td class="cell-detail">
+           <span class="detail-short">${det.slice(0,LIMIT)}…</span>
+           <span class="detail-full">${det}</span>
+           <button class="detail-toggle" onclick="toggleDetail(this)">▼ Read more</button>
+         </td>`
+      : `<td style="font-size:11px;max-width:180px;word-break:break-word">${det||'-'}</td>`;
+
+    // Document cell
+    const docUrl  = g('fileUploadedUrl')||g('Document Link')||'';
+    const docName = g('fileName')||g('Supporting Document')||'';
+    const docCell = docUrl
+      ? `<td style="font-size:11px"><a href="${docUrl}" target="_blank" style="color:var(--blue-mid);text-decoration:underline">📄 View</a></td>`
       : (docName ? `<td style="font-size:11px;color:var(--text-mid)" title="${docName}">📎 ${docName.slice(0,15)}${docName.length>15?'…':''}</td>` : '<td style="font-size:11px;color:#94a3b8">-</td>');
-    const empId=g('empId')||g('Employee ID')||'';
-    tr.innerHTML=`<td>${i+1}</td>
+
+    const empId = g('empId')||g('Emp ID')||g('Employee ID')||'';
+    tr.innerHTML=`<td>${globalIdx+1}</td>
       <td><strong>${empId}</strong></td>
       ${f(g('name')||g('Name'))}
       ${f(g('whatsapp')||g('WhatsApp'))}
@@ -1209,7 +1271,7 @@ async function renderAdminDash(){
       ${f(g('prevRegion')||g('Prev Region'))}
       ${f(g('dateJoiningPrevZone')||g('Date Joined Prev Zone'))}
       ${f(g('transferCategory')||g('Transfer Category'))}
-      <td style="font-size:11px;max-width:160px;word-break:break-word">${g('transferDetails')||g('Transfer Details')||'-'}</td>
+      ${detCell}
       ${docCell}
       ${f(g('requestedZone')||g('Requested Zone'))}
       ${f(g('regionPref1')||g('Region Pref 1'))}
@@ -1222,6 +1284,54 @@ async function renderAdminDash(){
       <td><button class="btn btn-danger btn-xs" onclick="confirmDelete('${empId}')">🗑</button></td>`;
     tbody.appendChild(tr);
   });
+
+  renderPaginationControls(totalPages);
+}
+
+function renderPaginationControls(totalPages){
+  const wrap = document.getElementById('pagination-wrap');
+  const ctrl = document.getElementById('pagination-controls');
+  const info = document.getElementById('pg-info-text');
+  const jump = document.getElementById('pg-jump-input');
+
+  if(totalPages <= 1){ wrap.classList.add('hidden'); return; }
+  wrap.classList.remove('hidden');
+
+  const p    = _currentPage;
+  const start= (p-1)*PAGE_SIZE + 1;
+  const end  = Math.min(p*PAGE_SIZE, _allEntries.length);
+  info.textContent = `Showing ${start}–${end} of ${_allEntries.length} entries`;
+  jump.max   = totalPages;
+  jump.value = p;
+
+  let btns = '';
+  // Prev
+  btns += `<button class="pg-btn" onclick="renderPage(${p-1})" ${p===1?'disabled':''}>‹ Prev</button>`;
+
+  // Page numbers — show first, last, current ±2
+  const pages = new Set([1, totalPages, p, p-1, p-2, p+1, p+2].filter(x=>x>=1&&x<=totalPages));
+  let prev = 0;
+  [...pages].sort((a,b)=>a-b).forEach(pg=>{
+    if(prev && pg-prev > 1) btns += `<span class="pg-info">…</span>`;
+    btns += `<button class="pg-btn ${pg===p?'active':''}" onclick="renderPage(${pg})">${pg}</button>`;
+    prev = pg;
+  });
+
+  // Next
+  btns += `<button class="pg-btn" onclick="renderPage(${p+1})" ${p===totalPages?'disabled':''}>Next ›</button>`;
+  ctrl.innerHTML = btns;
+}
+
+function jumpToPage(){
+  const v = parseInt(document.getElementById('pg-jump-input').value);
+  if(!isNaN(v)) renderPage(v);
+}
+
+function toggleDetail(btn){
+  const td = btn.closest('td');
+  td.classList.toggle('row-expanded');
+  const expanded = td.classList.contains('row-expanded');
+  btn.textContent = expanded ? '▲ Show less' : '▼ Read more';
 }
 
 function confirmDelete(empId){
